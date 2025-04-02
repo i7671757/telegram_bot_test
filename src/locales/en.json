@@ -1,0 +1,119 @@
+{
+  "welcome": "Hello! I am your bot. Use the menu for navigation:",
+  "menu": {
+    "time": "🕒 Time",
+    "photo": "📸 Photo",
+    "help": "ℹ️ Help",
+    "menu": "📋 Menu",
+    "language": "🌐 Language",
+    "greet": "Say Hello",
+    "check_time": "Check time",
+    "main": "Main menu",
+    "back": "◀️ Back",
+    "buttons": {
+      "catalog": "📋 Catalog",
+      "cart": "🛒 Cart",
+      "orders": "📦 Orders",
+      "profile": "👤 Profile"
+    }
+  },
+  "menuLanguage": {
+    "ru": "🇷🇺 Русский",
+    "uz": "🇺🇿 O'zbekcha",
+    "en": "🇬🇧 English"
+  },
+  "city": {
+    "tashkent": "Tashkent",
+    "samarkand": "Samarkand",
+    "bukhara": "Bukhara"
+  },
+  "commands": {
+    "start": "🚀 Start using",
+    "menu": "📋 Main menu",
+    "language": "🌐 Change language",
+    "session": "⚙️ Session settings",
+    "reset": "🔄 Reset settings",
+    "update_menu": "🔄 Update command menu",
+    "settings": "🔧 Settings"
+  },
+  "cities": {
+    "moscow": "Moscow",
+    "new_york": "New York",
+    "tokyo": "Tokyo"
+  },
+  "time": "Current time in Tashkent: ${time}",
+  "photo": {
+    "request": "Send me a photo and I will process it!",
+    "received": "You sent a photo! File ID: ${fileId}",
+    "link": "Photo link: ${link}"
+  },
+  "help": {
+    "title": "I can:",
+    "time": "- Show time in Tashkent",
+    "photo": "- Process photos",
+    "menu": "- Show command menu",
+    "language": "- Change language"
+  },
+  "default": "Use the menu for navigation:",
+  "default_message": "You wrote: ${text}",
+  "language": {
+    "select": "Select language:",
+    "changed": "Language changed to English",
+    "current": "Current language: English"
+  },
+  "greeting": "Hello, ${name}! How can I help you today?",
+  "say_hello": "Nice to meet you! I'm your helpful bot.",
+  "time_in": "Current time in ${city}: ${time}",
+  "select_city": "Select city:",
+  "select_branch": "Select branch:",
+  "branch_selected": "You selected branch {branch} in {city}",
+  "session": {
+    "reset": "Session settings reset"
+  },
+  "navigation": {
+    "history_empty": "Cannot go back. Navigation history is empty.",
+    "back_success": "You have returned to the previous step.",
+    "back_error": "Could not go back. Please try again."
+  },
+  "settings": {
+    "settings": "🔧 Settings",
+    "title": "User Settings",
+    "change_language": "🌐 Change language",
+    "change_city": "🏙️ Change city",
+    "change_branch": "🏢 Change branch",
+    "my_settings": "📋 My settings",
+    "not_selected": "Not selected",
+    "need_city_first": "You need to select a city before choosing a branch.",
+    "current": "<b>Your current settings:</b>\n\n🌐 Language: <b>{language}</b>\n🏙️ City: <b>{city}</b>\n🏢 Branch: <b>{branch}</b>"
+  },
+  "main_menu": {
+    "title": "Main Menu",
+    "order": "🎁 Make an order",
+    "order_history": "📋 Order history",
+    "aksiya": "🔥 Promotions",
+    "join_team": "👤 Join our team",
+    "contact": "🍗 Contact Les Ailes"
+  },
+  "order": {
+    "start_message": "Here you can place an order. Choose a category:",
+    "history_empty": "You don't have any orders yet. Make your first order!",
+    "self_pickup": "🏃 Self-pickup",
+    "delivery": "🚗 Delivery"
+  },
+  "aksiya": {
+    "no_active": "There are no active promotions at the moment. Stay tuned for updates!"
+  },
+  "join_team": {
+    "info": "Want to become part of the Les Ailes team? Send your resume to email: careers@lesailes.uz or call: +998 71 123-45-67"
+  },
+  "contact": {
+    "info": "<b>Les Ailes Contact Information:</b>\n\nPhone: +998 71 123-45-67\nEmail: info@lesailes.uz\nWebsite: www.lesailes.uz\n\nWe are open daily from 10:00 AM to 10:00 PM."
+  },
+  "self_pickup": {
+    "select_option": "Select an option:",
+    "find_nearest": "📍 Find nearest branch",
+    "order_here": "🌐 Order here",
+    "select_branch": "Select branch",
+    "location_request": "Please send your location to determine the nearest branch"
+  }
+} 

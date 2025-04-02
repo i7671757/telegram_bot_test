@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Меню бота</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 16px;
+            color: var(--tg-theme-text-color);
+            background: var(--tg-theme-bg-color);
+        }
+
+        .menu-item {
+            display: flex;
+            padding: 12px;
+            margin-bottom: 8px;
+            background: var(--tg-theme-secondary-bg-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .menu-item:hover {
+            background: var(--tg-theme-hint-color);
+        }
+
+        .menu-item-icon {
+            margin-right: 12px;
+            font-size: 24px;
+        }
+
+        .menu-item-content {
+            flex: 1;
+        }
+
+        .menu-item-title {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .menu-item-description {
+            font-size: 14px;
+            color: var(--tg-theme-hint-color);
+        }
+
+        .language-selector {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 16px;
+            gap: 8px;
+        }
+
+        .language-btn {
+            padding: 4px 8px;
+            border-radius: 4px;
+            background: var(--tg-theme-secondary-bg-color);
+            border: none;
+            color: var(--tg-theme-text-color);
+            cursor: pointer;
+        }
+
+        .language-btn.active {
+            background: var(--tg-theme-button-color);
+            color: var(--tg-theme-button-text-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="language-selector">
+        <button class="language-btn" onclick="setLanguage('en')">🇬🇧</button>
+        <button class="language-btn" onclick="setLanguage('ru')">🇷🇺</button>
+    </div>
+
+    <div id="menu">
+        <div class="menu-item" onclick="sendCommand('time')">
+            <div class="menu-item-icon">🕒</div>
+            <div class="menu-item-content">
+                <div class="menu-item-title" data-i18n="menu.time">Time</div>
+                <div class="menu-item-description" data-i18n="menu.time.description">Get current time in Tashkent</div>
+            </div>
+        </div>
+
+        <div class="menu-item" onclick="sendCommand('photo')">
+            <div class="menu-item-icon">📸</div>
+            <div class="menu-item-content">
+                <div class="menu-item-title" data-i18n="menu.photo">Photo</div>
+                <div class="menu-item-description" data-i18n="menu.photo.description">Send and process photo</div>
+            </div>
+        </div>
+
+        <div class="menu-item" onclick="sendCommand('help')">
+            <div class="menu-item-icon">ℹ️</div>
+            <div class="menu-item-content">
+                <div class="menu-item-title" data-i18n="menu.help">Help</div>
+                <div class="menu-item-description" data-i18n="menu.help.description">Get list of commands and features</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand();
+
+        const translations = {
+            en: {
+                'menu.time': 'Time',
+                'menu.time.description': 'Get current time in Tashkent',
+                'menu.photo': 'Photo',
+                'menu.photo.description': 'Send and process photo',
+                'menu.help': 'Help',
+                'menu.help.description': 'Get list of commands and features'
+            },
+            ru: {
+                'menu.time': 'Время',
+                'menu.time.description': 'Узнать текущее время в Ташкенте',
+                'menu.photo': 'Фото',
+                'menu.photo.description': 'Отправить и обработать фото',
+                'menu.help': 'Помощь',
+                'menu.help.description': 'Получить список команд и возможностей'
+            }
+        };
+
+        let currentLanguage = 'en';
+
+        function setLanguage(lang) {
+            currentLanguage = lang;
+            updateTranslations();
+            updateLanguageButtons();
+            // Отправляем информацию о смене языка в бота
+            tg.sendData(`set_language_${lang}`);
+        }
+
+        function updateTranslations() {
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                element.textContent = translations[currentLanguage][key];
+            });
+        }
+
+        function updateLanguageButtons() {
+            document.querySelectorAll('.language-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent.includes(currentLanguage === 'en' ? '🇬🇧' : '🇷🇺')) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+
+        function sendCommand(command) {
+            tg.sendData(command);
+            tg.close();
+        }
+
+        // Инициализация при загрузке
+        updateTranslations();
+        updateLanguageButtons();
+    </script>
+</body>
+</html> 
