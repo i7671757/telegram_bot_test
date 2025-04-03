@@ -36,6 +36,12 @@ const languageHandlers = (bot) => {
 
 async function handleLanguageSelection(ctx, lang) {
   try {
+    if (!ctx.i18n || !ctx.i18n.locale) {
+      logger.warn('i18n middleware not properly initialized');
+      await ctx.reply(ctx.i18n.t('error.i18n_not_initialized'));
+      return;
+    }
+    
     ctx.updateSession({
       language: lang,
       languageSelected: true,
@@ -64,8 +70,8 @@ async function handleLanguageSelection(ctx, lang) {
       }
     });
   } catch (error) {
-    logger.error(`Ошибка в handleLanguageSelection для языка ${lang}`, error);
-    throw error;
+    logger.error(`Ошибка в handleLanguageSelection для языка ${lang}: ${error.message}`);
+    await ctx.reply(ctx.i18n.t('error.language_selection'));
   }
 }
 

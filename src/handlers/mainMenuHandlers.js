@@ -1,6 +1,7 @@
 import logger from '../utils/logger.js';
 import { setCommandsMenu } from '../utils/commands.js';
 import { showMainMenu } from './cityHandlers.js';
+import axios from 'axios';
 
 // Обработчики главного меню
 const mainMenuHandlers = (bot) => {
@@ -172,7 +173,7 @@ const mainMenuHandlers = (bot) => {
       await ctx.reply(ctx.i18n.t('self_pickup.location_request'), {
         reply_markup: {
           keyboard: [
-            [{ text: ctx.i18n.t('menu.back'), request_location: true }],
+            [{ text: '📍 Отправить мою локацию', request_location: true }],
             [{ text: ctx.i18n.t('menu.back') }]
           ],
           resize_keyboard: true
@@ -184,8 +185,51 @@ const mainMenuHandlers = (bot) => {
     }
   });
 
+  // Обработка получения локации от пользователя
+  bot.on('location', async (ctx) => {
+    try {
+      const location = ctx.message.location;
+      logger.info(`Пользователь ${ctx.from.id} отправил локацию: ${JSON.stringify(location)}`);
+      
+      // Получаем адрес через OpenStreetMap Nominatim API
+      const response = await axios.get(`https://nominatim.openstreetmap.org/reverse`, {
+        params: {
+          format: 'json',
+          lat: location.latitude,
+          lon: location.longitude,
+          zoom: 18,
+          addressdetails: 1
+        }
+      });
+      
+      let address = 'Не удалось определить адрес';
+      if (response.data && response.data.display_name) {
+        address = response.data.display_name;
+      }
+      
+      await ctx.reply(`Ваш адрес: ${address}\n\nМы определили ваше местоположение и найдем ближайший филиал.`, {
+        reply_markup: {
+          keyboard: [
+            [{ text: ctx.i18n.t('menu.back') }]
+          ],
+          resize_keyboard: true
+        }
+      });
+    } catch (error) {
+      logger.error(`Ошибка при обработке локации от пользователя ${ctx.from.id}`, error);
+      await ctx.reply('Извините, произошла ошибка при определении адреса. Пожалуйста, попробуйте еще раз.', {
+        reply_markup: {
+          keyboard: [
+            [{ text: ctx.i18n.t('menu.back') }]
+          ],
+          resize_keyboard: true
+        }
+      });
+    }
+  });
+
   // Обработка кнопки "Заказать тут"
-  bot.hears(/🌐.*заказать тут.*|🌐.*order here.*|🌐.*buyurtma.*/i, async (ctx) => {
+  bot.hears(/🌐.*заказать тут.*|🌐.*order here.*|🌐.*buyurtma berish.*/i, async (ctx) => {
     try {
       logger.info(`Пользователь ${ctx.from.id} выбрал "Заказать тут"`);
       
@@ -195,23 +239,13 @@ const mainMenuHandlers = (bot) => {
       });
 
       // Отправляем сообщение со ссылкой на сайт
-      await ctx.reply(ctx.i18n.t('self_pickup.order_website'), {
+      await ctx.reply('Закажи со своей локацией - https://lesailes.uz/', {
         parse_mode: 'HTML',
         disable_web_page_preview: false,
         reply_markup: {
           inline_keyboard: [
             [{ text: 'Перейти', url: 'https://lesailes.uz/' }]
           ]
-        }
-      });
-
-      // Показываем клавиатуру с кнопкой "Назад"
-      await ctx.reply(ctx.i18n.t('navigation.back_option'), {
-        reply_markup: {
-          keyboard: [
-            [{ text: ctx.i18n.t('menu.back') }]
-          ],
-          resize_keyboard: true
         }
       });
     } catch (error) {
@@ -295,6 +329,8 @@ const mainMenuHandlers = (bot) => {
   bot.hears(/🏪.*/i, async (ctx) => {
     try {
       const branchName = ctx.message.text;
+      const cityKey = ctx.session.selectedCity;
+      
       logger.info(`Пользователь ${ctx.from.id} выбрал филиал ${branchName}`);
       
       ctx.updateSession({

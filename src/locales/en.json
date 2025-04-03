@@ -25,7 +25,8 @@
   "city": {
     "tashkent": "Tashkent",
     "samarkand": "Samarkand",
-    "bukhara": "Bukhara"
+    "bukhara": "Bukhara",
+    "unknown": "Sorry, I don't know this city. Please select a city from the list."
   },
   "commands": {
     "start": "🚀 Start using",
@@ -73,7 +74,8 @@
   "navigation": {
     "history_empty": "Cannot go back. Navigation history is empty.",
     "back_success": "You have returned to the previous step.",
-    "back_error": "Could not go back. Please try again."
+    "back_error": "Could not go back. Please try again.",
+    "back_option": "Use <b>Back</b> button to return to previous menu"
   },
   "settings": {
     "settings": "🔧 Settings",
@@ -114,6 +116,44 @@
     "find_nearest": "📍 Find nearest branch",
     "order_here": "🌐 Order here",
     "select_branch": "Select branch",
-    "location_request": "Please send your location to determine the nearest branch"
+    "location_request": "Please send your location to determine the nearest branch",
+    "order_website": "Order here - https://lesailes.uz/"
+  },
+  "branches": {
+    "tashkent": {
+      "title": "Branches in Tashkent:",
+      "list": {
+        "chilanzar": "🏪 Chilanzar",
+        "center": "🏪 Center 1",
+        "sergeli": "🏪 Sergeli",
+        "yunusabad": "🏪 Yunusabad"
+      }
+    },
+    "samarkand": {
+      "title": "Branches in Samarkand:",
+      "list": {
+        "center": "🏪 Center",
+        "university": "🏪 University"
+      }
+    },
+    "bukhara": {
+      "title": "Branches in Bukhara:",
+      "list": {
+        "center": "🏪 Center"
+      }
+    }
+  },
+  "branch_info": {
+    "address": "📍 Address",
+    "phone": "📞 Phone",
+    "working_hours": "🕒 Working Hours",
+    "make_order": "Click \"Make Order\" to place an order",
+    "location_sent": "📍 Branch location sent"
+  },
+  "error": {
+    "city_selection": "An error occurred while selecting the city. Please try again.",
+    "language_selection": "An error occurred while selecting the language. Please try again.",
+    "i18n_not_initialized": "An error occurred while initializing translations. Please try again later.",
+    "unknown": "An unknown error occurred. Please try again later."
   }
 } 

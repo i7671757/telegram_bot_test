@@ -1,12 +1,17 @@
-const logger = require('../utils/logger');
-const { setCommandsMenu } = require('../utils/commands');
-const { showMainMenu } = require('./cityHandlers');
+import logger from '../utils/logger.js';
+import { setCommandsMenu } from '../utils/commands.js';
+import { showMainMenu } from './cityHandlers.js';
 
 // Обработка выбора филиала
 const branchHandlers = (bot) => {
   bot.hears(/^(Tashkent|Samarkand|Bukhara) Branch \d+$/i, async (ctx) => {
     try {
       const branchName = ctx.message.text;
+      
+      if (!ctx.i18n || !ctx.i18n.t) {
+        logger.warn('i18n middleware not properly initialized');
+        return;
+      }
       
       let city;
       if (branchName.includes('Tashkent')) {
@@ -48,6 +53,11 @@ const branchHandlers = (bot) => {
     try {
       logger.info(`Пользователь ${ctx.from.id} вернулся в главное меню`);
       
+      if (!ctx.i18n || !ctx.i18n.t) {
+        logger.warn('i18n middleware not properly initialized');
+        return;
+      }
+      
       // Обновляем меню команд с учетом текущего языка
       await setCommandsMenu(ctx);
       
@@ -61,4 +71,4 @@ const branchHandlers = (bot) => {
   });
 };
 
-module.exports = branchHandlers; 
+export default branchHandlers; 

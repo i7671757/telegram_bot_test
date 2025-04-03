@@ -135,6 +135,11 @@ const settingsHandler = (bot) => {
     try {
       logger.info(`Пользователь ${ctx.from.id} запросил свои текущие настройки`);
       
+      if (!ctx.i18n || !ctx.i18n.t) {
+        logger.warn('i18n middleware not properly initialized');
+        return;
+      }
+      
       const settings = {
         language: ctx.i18n.t(`language.current`),
         city: ctx.session.selectedCity ? ctx.i18n.t(`city.${ctx.session.selectedCity}`) : ctx.i18n.t('settings.not_selected'),

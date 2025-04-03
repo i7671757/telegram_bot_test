@@ -4,7 +4,7 @@ import { showMainMenu } from './cityHandlers.js';
 
 // Обработчик для кнопки "Назад"
 const backHandler = (bot) => {
-  bot.hears(/◀️ Назад|◀️ Back|◀️ Orqaga/, async (ctx) => {
+  bot.hears(/◀️ Назад|◀️ Back|◀️ Ortga/, async (ctx) => {
     try {
       logger.info(`Пользователь ${ctx.from.id} нажал кнопку "Назад"`);
       

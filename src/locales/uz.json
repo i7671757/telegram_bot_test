@@ -9,7 +9,7 @@
     "greet": "Salomlashish",
     "check_time": "Vaqtni bilish",
     "main": "Asosiy menyu",
-    "back": "◀️ Orqaga",
+    "back": "◀️ Ortga",
     "buttons": {
       "catalog": "📋 Katalog",
       "cart": "🛒 Savat",
@@ -25,7 +25,8 @@
   "city": {
     "tashkent": "Toshkent",
     "samarkand": "Samarqand",
-    "bukhara": "Buxoro"
+    "bukhara": "Buxoro",
+    "unknown": "Kechirasiz, men bu shaharni bilmayman. Iltimos, ro'yxatdan shahar tanlang."
   },
   "commands": {
     "start": "🚀 Ishga tushirish",
@@ -71,9 +72,10 @@
     "reset": "Sessiya sozlamalari qayta tiklandi"
   },
   "navigation": {
-    "history_empty": "Orqaga qaytib bo'lmaydi. Navigatsiya tarixi bo'sh.",
+    "history_empty": "Ortga qaytib bo'lmaydi. Navigatsiya tarixi bo'sh.",
     "back_success": "Siz oldingi bosqichga qaytdingiz.",
-    "back_error": "Orqaga qaytib bo'lmadi. Iltimos, qayta urinib ko'ring."
+    "back_error": "Ortga qaytib bo'lmadi. Iltimos, qayta urinib ko'ring.",
+    "back_option": "Ortga qaytish uchun Ortga tugmasini bosing"
   },
   "settings": {
     "settings": "🔧 Sozlamalar",
@@ -97,8 +99,8 @@
   "order": {
     "start_message": "Bu yerda buyurtma berishingiz mumkin. Kategoriyani tanlang:",
     "history_empty": "Sizda hali buyurtmalar yo'q. Birinchi buyurtmangizni bering!",
-    "self_pickup": "🏃 Самовывоз",
-    "delivery": "🚗 Доставка"
+    "self_pickup": "🏃 Olib Ketish",
+    "delivery": "🚗 Yetakazib berish"
   },
   "aksiya": {
     "no_active": "Hozirgi vaqtda faol aksiyalar yo'q. Yangilanishlarni kuzatib boring!"
@@ -114,6 +116,44 @@
     "find_nearest": "📍 Eng yaqin filialni topish",
     "order_here": "🌐 Bu yerda buyurtma berish",
     "select_branch": "Fillialni tanlang",
-    "location_request": "Bizning filialimizni topish uchun manzil yuboring"
+    "location_request": "Bizning filialimizni topish uchun manzil yuboring",
+    "order_website": "Bu yerda buyurtma berish - https://lesailes.uz/"
+  },
+  "branches": {
+    "tashkent": {
+      "title": "Toshkentdagi filiallar:",
+      "list": {
+        "chilanzar": "🏪 Chilanzar",
+        "center": "🏪 Markaz 1",
+        "sergeli": "🏪 Sergeli",
+        "yunusabad": "🏪 Yunusobod"
+      }
+    },
+    "samarkand": {
+      "title": "Samarqanddagi filiallar:",
+      "list": {
+        "center": "🏪 Markaz",
+        "university": "🏪 Universitet"
+      }
+    },
+    "bukhara": {
+      "title": "Buxorodagi filiallar:",
+      "list": {
+        "center": "🏪 Markaz"
+      }
+    }
+  },
+  "branch_info": {
+    "address": "📍 Manzil",
+    "phone": "📞 Telefon",
+    "working_hours": "🕒 Ish vaqti",
+    "make_order": "Buyurtma berish uchun \"Buyurtma berish\" tugmasini bosing",
+    "location_sent": "📍 Filial manzili yuborildi"
+  },
+  "error": {
+    "city_selection": "Shaharni tanlashda xatolik yuz berdi. Iltimos, qaytadan urinib ko'ring.",
+    "language_selection": "Tilni tanlashda xatolik yuz berdi. Iltimos, qaytadan urinib ko'ring.",
+    "i18n_not_initialized": "Tarjimalarni ishga tushirishda xatolik yuz berdi. Iltimos, keyinroq qaytadan urinib ko'ring.",
+    "unknown": "Noma'lum xatolik yuz berdi. Iltimos, keyinroq qaytadan urinib ko'ring."
   }
 } 
