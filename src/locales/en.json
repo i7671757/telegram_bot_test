@@ -35,7 +35,7 @@
     "session": "⚙️ Session settings",
     "reset": "🔄 Reset settings",
     "update_menu": "🔄 Update command menu",
-    "settings": "🔧 Settings"
+    "settings": "⚙️Settings ℹ️ Information"
   },
   "cities": {
     "moscow": "Moscow",
@@ -78,7 +78,7 @@
     "back_option": "Use <b>Back</b> button to return to previous menu"
   },
   "settings": {
-    "settings": "🔧 Settings",
+    "settings": "⚙️Settings ℹ️ Information",
     "title": "User Settings",
     "change_language": "🌐 Change language",
     "change_city": "🏙️ Change city",
@@ -90,14 +90,15 @@
   },
   "main_menu": {
     "title": "Main Menu",
-    "order": "🎁 Make an order",
-    "order_history": "📋 Order history",
+    "order": "🛍 Order",
+    "order_history": "📖 My Orders",
     "aksiya": "🔥 Promotions",
-    "join_team": "👤 Join our team",
-    "contact": "🍗 Contact Les Ailes"
+    "join_team": "🙋🏻‍♂️ Join Our Team",
+    "contact": "☎️ Contact Us",
+    "select_branch": "🏬 Select Branch"
   },
   "order": {
-    "start_message": "Here you can place an order. Choose a category:",
+    "start_message": "Take away  🙋‍♂️ or <b>delivery</b> 🚙",
     "history_empty": "You don't have any orders yet. Make your first order!",
     "self_pickup": "🏃 Self-pickup",
     "delivery": "🚗 Delivery"
@@ -109,15 +110,31 @@
     "info": "Want to become part of the Les Ailes team? Send your resume to email: careers@lesailes.uz or call: +998 71 123-45-67"
   },
   "contact": {
-    "info": "<b>Les Ailes Contact Information:</b>\n\nPhone: +998 71 123-45-67\nEmail: info@lesailes.uz\nWebsite: www.lesailes.uz\n\nWe are open daily from 10:00 AM to 10:00 PM."
+    "info": "<b>Les Ailes Contact Information:</b>\n\nPhone: +998 71 123-45-67\nEmail: info@lesailes.uz\nWebsite: www.lesailes.uz\n\nWe are open daily from 10:00 AM to 10:00 PM.",
+    "write_review": "Write to Us",
+    "write_complaint": "Leave a Review"
   },
   "self_pickup": {
-    "select_option": "Select an option:",
+    "select_option": "<b>Where to deliver? Send your location and we determine the nearest branch and delivery cost.</b>",
     "find_nearest": "📍 Find nearest branch",
     "order_here": "🌐 Order here",
-    "select_branch": "Select branch",
+    "select_branch": "🏬 Select branch",
     "location_request": "Please send your location to determine the nearest branch",
-    "order_website": "Order here - https://lesailes.uz/"
+    "order_website": "Order here - https://lesailes.uz/",
+    "send_location": "📍 Send my location",
+    "goTo": "Proceed",
+    "confirm": "✅ Confirm",
+    "back": "◀️ Back",
+    "confirm_order": "✅ Confirm Order"
+  },
+  "menu_categories": {
+    "title": "Choose category:",
+    "sets": "🍱 Sets",
+    "snacks": "🍟 Snacks",
+    "burgers": "🍔 Burgers",
+    "chicken": "🍗 Chicken",
+    "back": "◀️ Back",
+    "basket": "🛒 Basket"
   },
   "branches": {
     "tashkent": {

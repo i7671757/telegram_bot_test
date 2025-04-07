@@ -17,6 +17,7 @@ import branchHandlers from './handlers/branchHandlers.js';
 import backHandler from './handlers/backHandler.js';
 import settingsHandler from './handlers/settingsHandler.js';
 import mainMenuHandlers from './handlers/mainMenuHandlers.js';
+import { locationHandlers } from './handlers/locationHandlers.js';
 
 // Проверка наличия токена
 if (!process.env.TELEGRAM_TOKEN) {
@@ -53,7 +54,7 @@ branchHandlers(bot);
 backHandler(bot);
 settingsHandler(bot);
 mainMenuHandlers(bot);
-
+locationHandlers(bot);
 
 // Добавляем специальную команду для обновления меню команд
 bot.command('update_menu', async (ctx) => {

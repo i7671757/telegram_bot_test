@@ -1,15 +1,16 @@
 import logger from '../utils/logger.js';
 import { setCommandsMenu } from '../utils/commands.js';
 import { showMainMenu } from './cityHandlers.js';
+const {match} =require("telegraf-i18n") 
 
 // Обработчик настроек пользователя
 const settingsHandler = (bot) => {
   // Обработка команды и кнопки Настройки
   bot.command('settings', handleSettings);
-  bot.hears(/🔧 Настройки|Settings|Sozlamalar/, handleSettings);
+  bot.hears(match("settings.settings"), handleSettings);
   
   // Обработка выбора настройки языка
-  bot.hears(/🌐 Изменить язык|Change language|Tilni o'zgartirish/, async (ctx) => {
+  bot.hears(match("settings.change_language"), async (ctx) => {
     try {
       logger.info(`Пользователь ${ctx.from.id} выбрал настройку языка`);
       
@@ -38,7 +39,7 @@ const settingsHandler = (bot) => {
   });
   
   // Обработка выбора настройки города
-  bot.hears(/🏙️ Изменить город|Change city|Shaharni o'zgartirish/, async (ctx) => {
+  bot.hears(match("settings.change_city"), async (ctx) => {
     try {
       logger.info(`Пользователь ${ctx.from.id} выбрал настройку города`);
       
@@ -68,7 +69,7 @@ const settingsHandler = (bot) => {
   });
   
   // Обработка выбора настройки филиала
-  bot.hears(/🏢 Изменить филиал|Change branch|Fillialni o'zgartirish/, async (ctx) => {
+  bot.hears(match("settings.change_branch"), async (ctx) => {
     try {
       logger.info(`Пользователь ${ctx.from.id} выбрал настройку филиала`);
       
@@ -131,7 +132,7 @@ const settingsHandler = (bot) => {
   });
   
   // Обработка просмотра текущих настроек
-  bot.hears(/📋 Мои настройки|My settings|Mening sozlamalarim/, async (ctx) => {
+  bot.hears(match("settings.my_settings"), async (ctx) => {
     try {
       logger.info(`Пользователь ${ctx.from.id} запросил свои текущие настройки`);
       

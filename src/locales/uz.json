@@ -35,7 +35,7 @@
     "session": "⚙️ Sessiya sozlamalari",
     "reset": "🔄 Sozlamalarni tiklash",
     "update_menu": "🔄 Buyruqlar menyusini yangilash",
-    "settings": "🔧 Sozlamalar"
+    "settings": "⚙️Sozlash ℹ️ Ma'lumotlar"
   },
   "cities": {
     "moscow": "Moskva",
@@ -78,7 +78,7 @@
     "back_option": "Ortga qaytish uchun Ortga tugmasini bosing"
   },
   "settings": {
-    "settings": "🔧 Sozlamalar",
+    "settings": "⚙️Sozlash ℹ️ Ma'lumotlar",
     "title": "Foydalanuvchi sozlamalari",
     "change_language": "🌐 Tilni o'zgartirish",
     "change_city": "🏙️ Shaharni o'zgartirish",
@@ -90,14 +90,15 @@
   },
   "main_menu": {
     "title": "Asosiy menyu",
-    "order": "🎁 Buyurtma berish",
-    "order_history": "📋 Buyurtmalar tarixi",
-    "aksiya": "🔥 Aksiya",
-    "join_team": "👤 Jamoamizga qo'shiling",
-    "contact": "🍗 Les Ailes bilan aloqa"
+    "order": "🛍 Buyurtma berish",
+    "order_history": "📖 Mening buyurtmalarim",
+    "aksiya": "🔥 Aksiyalar",
+    "join_team": "🙋🏻‍♂️ Bizning jamoaga qo'shiling",
+    "contact": "☎️ Fikr-mulohaza",
+    "select_branch": "🏬 Filial tanlash"
   },
   "order": {
-    "start_message": "Bu yerda buyurtma berishingiz mumkin. Kategoriyani tanlang:",
+    "start_message": "Buyurtmani <b>o'zingiz</b> 🙋‍♂️ olib keting yoki <b>Yetkazib berishni</b> 🚙 tanlang",
     "history_empty": "Sizda hali buyurtmalar yo'q. Birinchi buyurtmangizni bering!",
     "self_pickup": "🏃 Olib Ketish",
     "delivery": "🚗 Yetakazib berish"
@@ -109,15 +110,31 @@
     "info": "Les Ailes jamoasining bir qismi bo'lishni xohlaysizmi? Rezumengizni email orqali yuboring: careers@lesailes.uz yoki qo'ng'iroq qiling: +998 71 123-45-67"
   },
   "contact": {
-    "info": "<b>Les Ailes Aloqa Ma'lumotlari:</b>\n\nTelefon: +998 71 123-45-67\nEmail: info@lesailes.uz\nVeb-sayt: www.lesailes.uz\n\nBiz har kuni 10:00 dan 22:00 gacha ishlaymiz."
+    "info": "<b>Les Ailes Aloqa Ma'lumotlari:</b>\n\nTelefon: +998 71 123-45-67\nEmail: info@lesailes.uz\nVeb-sayt: www.lesailes.uz\n\nBiz har kuni 10:00 dan 22:00 gacha ishlaymiz.",
+    "write_review": "Bizga yozing",
+    "write_complaint": "Bizga qaytadan yozing"
   },
   "self_pickup": {
-    "select_option": "Tanlang:",
+    "select_option": "<b>Qayerdasiz 👀? Agar lokatsiyangizni📍 yuborsangiz, sizga eng yaqin filialni aniqlaymiz</b>",
     "find_nearest": "📍 Eng yaqin filialni topish",
     "order_here": "🌐 Bu yerda buyurtma berish",
-    "select_branch": "Fillialni tanlang",
+    "select_branch": "🏬 Fillialni tanlang",
     "location_request": "Bizning filialimizni topish uchun manzil yuboring",
-    "order_website": "Bu yerda buyurtma berish - https://lesailes.uz/"
+    "order_website": "Bu yerda buyurtma berish - https://lesailes.uz/",
+    "send_location": "📍 Mening manzilimni yuborish",
+    "goTo": "O'tish",
+    "back": "◀️ Ortga",
+    "confirm": "✅ Tasdiqlash",
+    "confirm_order": "✅ Buyurtmani tasdiqlash"
+  },
+  "menu_categories": {
+    "title": "Kategoriyani tanlang:",
+    "sets": "🍱 Setlar",
+    "snacks": "🍟 Sneklar",
+    "burgers": "🍔 Burgerlar",
+    "chicken": "🍗 Tovuq",
+    "back": "◀️ Ortga",
+    "basket": "🛒 Savat"
   },
   "branches": {
     "tashkent": {

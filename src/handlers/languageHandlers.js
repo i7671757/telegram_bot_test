@@ -1,9 +1,9 @@
 import { setCommandsMenu } from '../utils/commands.js';
 import logger from '../utils/logger.js';
-
+const {match} =require("telegraf-i18n") 
 // Обработка выбора языка по тексту
 const languageHandlers = (bot) => {
-  bot.hears(/🇷🇺 Русский/, async (ctx) => {
+  bot.hears(match("menuLanguage.ru"), async (ctx) => {
     try {
       await handleLanguageSelection(ctx, 'ru');
       logger.info(`Пользователь ${ctx.from.id} выбрал русский язык`);
@@ -13,7 +13,7 @@ const languageHandlers = (bot) => {
     }
   });
 
-  bot.hears(/🇺🇿 O'zbekcha/, async (ctx) => {
+  bot.hears(match("menuLanguage.uz"), async (ctx) => {
     try {
       await handleLanguageSelection(ctx, 'uz');
       logger.info(`Пользователь ${ctx.from.id} выбрал узбекский язык`);
@@ -23,7 +23,7 @@ const languageHandlers = (bot) => {
     }
   });
 
-  bot.hears(/🇬🇧 English/, async (ctx) => {
+  bot.hears(match("menuLanguage.en"), async (ctx) => {
     try {
       await handleLanguageSelection(ctx, 'en');
       logger.info(`Пользователь ${ctx.from.id} выбрал английский язык`);

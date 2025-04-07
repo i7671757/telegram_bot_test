@@ -2,11 +2,13 @@ import logger from '../utils/logger.js';
 import { setCommandsMenu } from '../utils/commands.js';
 import { showMainMenu } from './cityHandlers.js';
 import axios from 'axios';
+import { handleBranchSelection, handleBranchCallback, handleProceedToOrder } from '../commands/branches.js';
+const {match} =require("telegraf-i18n") 
 
 // Обработчики главного меню
 const mainMenuHandlers = (bot) => {
   // Обработка нажатия на кнопку "Сделать заказ"
-  bot.hears(/🎁 .+berish|🎁 .+order|🎁 .+заказ/i, async (ctx) => {
+  bot.hears(match("main_menu.order"), async (ctx) => {
     try {
       logger.info(`Пользователь ${ctx.from.id} выбрал "Сделать заказ"`);
       
@@ -35,7 +37,7 @@ const mainMenuHandlers = (bot) => {
   });
   
   // Обработка нажатия на кнопку "История заказов"
-  bot.hears(/📋 .+tarixi|📋 .+history|📋 .+истор/i, async (ctx) => {
+  bot.hears(match("main_menu.order_history"), async (ctx) => {
     try {
       logger.info(`Пользователь ${ctx.from.id} выбрал "История заказов"`);
       
@@ -60,7 +62,7 @@ const mainMenuHandlers = (bot) => {
   });
   
   // Обработка нажатия на кнопку "Акции"
-  bot.hears(/🔥 Aksiya|🔥 Promotions|🔥 Акции/i, async (ctx) => {
+  bot.hears(match("main_menu.aksiya"), async (ctx) => {
     try {
       logger.info(`Пользователь ${ctx.from.id} выбрал "Акции"`);
       
@@ -85,7 +87,7 @@ const mainMenuHandlers = (bot) => {
   });
   
   // Обработка нажатия на кнопку "Присоединиться к нашей команде"
-  bot.hears(/👤 .+qo['']shiling|👤 .+team|👤 .+команд/i, async (ctx) => {
+  bot.hears(match("main_menu.join_team"), async (ctx) => {
     try {
       logger.info(`Пользователь ${ctx.from.id} выбрал "Присоединиться к нашей команде"`);
       
@@ -94,11 +96,25 @@ const mainMenuHandlers = (bot) => {
         lastActionTime: new Date().toISOString()
       });
       
+      // Отправляем информацию с inline кнопкой для перехода к боту
       await ctx.reply(ctx.i18n.t('join_team.info'), {
         parse_mode: 'HTML',
         reply_markup: {
+          inline_keyboard: [
+            [{ text: 'Перейти', url: 'http://t.me/HavoqandJamoa_Bot' }]
+          ]
+        }
+      });
+
+      // Показываем основное меню
+      await ctx.reply(ctx.i18n.t('main_menu.title'), {
+        parse_mode: 'HTML',
+        reply_markup: {
           keyboard: [
-            [{ text: ctx.i18n.t('menu.back') }]
+            [{ text: ctx.i18n.t('main_menu.order') } ],
+            [{ text: ctx.i18n.t('main_menu.order_history') }],
+            [{ text: ctx.i18n.t('settings.settings') },{ text: ctx.i18n.t('main_menu.aksiya') }],
+            [{ text: ctx.i18n.t('main_menu.join_team') }, { text: ctx.i18n.t('main_menu.contact') }]
           ],
           resize_keyboard: true
         }
@@ -110,7 +126,7 @@ const mainMenuHandlers = (bot) => {
   });
   
   // Обработка нажатия на кнопку "Связаться с Les Ailes"
-  bot.hears(/🍗 .+aloqa|🍗 .+contact|🍗 .+связ/i, async (ctx) => {
+  bot.hears(match("main_menu.contact"), async (ctx) => {
     try {
       logger.info(`Пользователь ${ctx.from.id} выбрал "Связаться с Les Ailes"`);
       
@@ -123,6 +139,7 @@ const mainMenuHandlers = (bot) => {
         parse_mode: 'HTML',
         reply_markup: {
           keyboard: [
+            [{ text: ctx.i18n.t('contact.write_review') }, { text: ctx.i18n.t('contact.write_complaint') }],
             [{ text: ctx.i18n.t('menu.back') }]
           ],
           resize_keyboard: true
@@ -135,7 +152,7 @@ const mainMenuHandlers = (bot) => {
   });
 
   // Обработка нажатия на кнопку самовывоза
-  bot.hears(/.*самовывоз.*|.*self.?pickup.*|.*olib ketish.*/i, async (ctx) => {
+  bot.hears(match("order.self_pickup"), async (ctx) => {
     try {
       logger.info(`Пользователь ${ctx.from.id} выбрал "Самовывоз"`);
       
@@ -148,8 +165,8 @@ const mainMenuHandlers = (bot) => {
         parse_mode: 'HTML',
         reply_markup: {
           keyboard: [
-            [{ text: ctx.i18n.t('self_pickup.find_nearest') }, { text: ctx.i18n.t('self_pickup.order_here') }],
-            [{ text: ctx.i18n.t('self_pickup.select_branch') },   { text: ctx.i18n.t('menu.back') } ],
+            [{ text: ctx.i18n.t('self_pickup.send_location'), request_location: true }, { text: ctx.i18n.t('self_pickup.order_here') }],
+            [{ text: ctx.i18n.t('self_pickup.select_branch') }, { text: ctx.i18n.t('menu.back') }]
           ],
           resize_keyboard: true
         }
@@ -160,8 +177,50 @@ const mainMenuHandlers = (bot) => {
     }
   });
 
+  // Обработка кнопки "Выбрать филиал" в меню самовывоза
+  bot.hears(match("self_pickup.select_branch"), async (ctx) => {
+    try {
+      logger.info(`Пользователь ${ctx.from.id} выбрал "Выбрать филиал" в меню самовывоза`);
+      
+      ctx.updateSession({
+        lastAction: 'select_branch_pickup',
+        lastActionTime: new Date().toISOString()
+      });
+
+      // Используем функцию из branches.js для отображения списка филиалов
+      await handleBranchSelection(ctx);
+    } catch (error) {
+      logger.error(`Ошибка при выборе филиала для самовывоза для пользователя ${ctx.from.id}`, error);
+      throw error;
+    }
+  });
+  
+  // Обработка выбора конкретного филиала (callback)
+  bot.action(/select_branch_\d+/, handleBranchCallback);
+  
+  // Обработка кнопки "Подтвердить заказ" после выбора филиала
+  bot.action('proceed_to_order', handleProceedToOrder);
+  
+  // Обработка кнопки "Выбрать филиал" в главном меню
+  bot.hears(match("main_menu.select_branch"), async (ctx) => {
+    try {
+      logger.info(`Пользователь ${ctx.from.id} выбрал "Выбрать филиал" в главном меню`);
+      
+      ctx.updateSession({
+        lastAction: 'select_branch',
+        lastActionTime: new Date().toISOString()
+      });
+
+      // Используем функцию из branches.js для отображения списка филиалов
+      await handleBranchSelection(ctx);
+    } catch (error) {
+      logger.error(`Ошибка при выборе филиала из главного меню для пользователя ${ctx.from.id}`, error);
+      throw error;
+    }
+  });
+
   // Обработка кнопки "Определить ближайший филиал"
-  bot.hears(/📍.*ближайший.*|📍.*nearest.*|📍.*yaqin.*/i, async (ctx) => {
+  bot.hears(match("main_menu.find_nearest_branch"), async (ctx) => {
     try {
       logger.info(`Пользователь ${ctx.from.id} запросил определение ближайшего филиала`);
       
@@ -170,6 +229,7 @@ const mainMenuHandlers = (bot) => {
         lastActionTime: new Date().toISOString()
       });
 
+      // Отправляем сообщение с кнопкой для отправки локации
       await ctx.reply(ctx.i18n.t('self_pickup.location_request'), {
         reply_markup: {
           keyboard: [
@@ -192,35 +252,44 @@ const mainMenuHandlers = (bot) => {
       logger.info(`Пользователь ${ctx.from.id} отправил локацию: ${JSON.stringify(location)}`);
       
       // Получаем адрес через OpenStreetMap Nominatim API
-      const response = await axios.get(`https://nominatim.openstreetmap.org/reverse`, {
-        params: {
-          format: 'json',
-          lat: location.latitude,
-          lon: location.longitude,
-          zoom: 18,
-          addressdetails: 1
-        }
-      });
+      const url = new URL('https://nominatim.openstreetmap.org/reverse');
+      url.searchParams.append('format', 'json');
+      url.searchParams.append('lat', location.latitude);
+      url.searchParams.append('lon', location.longitude);
+      url.searchParams.append('zoom', '18');
+      url.searchParams.append('addressdetails', '1');
+      
+      logger.info(`Отправка запроса к Nominatim API: ${url.toString()}`);
+      
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`Nominatim API вернул ошибку: ${response.status} ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      logger.info(`Ответ от Nominatim API: ${JSON.stringify(data)}`);
       
       let address = 'Не удалось определить адрес';
-      if (response.data && response.data.display_name) {
-        address = response.data.display_name;
+      if (data && data.display_name) {
+        address = data.display_name;
       }
       
       await ctx.reply(`Ваш адрес: ${address}\n\nМы определили ваше местоположение и найдем ближайший филиал.`, {
         reply_markup: {
           keyboard: [
-            [{ text: ctx.i18n.t('menu.back') }]
+            [{ text: ctx.i18n.t('self_pickup.back') }, {text: ctx.i18n.t('self_pickup.confirm')}],
+            [{ text: ctx.i18n.t('self_pickup.send_location'), request_location: true }]
           ],
           resize_keyboard: true
         }
       });
     } catch (error) {
-      logger.error(`Ошибка при обработке локации от пользователя ${ctx.from.id}`, error);
-      await ctx.reply('Извините, произошла ошибка при определении адреса. Пожалуйста, попробуйте еще раз.', {
+      logger.error(`Ошибка при обработке локации от пользователя ${ctx.from.id}: ${error.message}`, error);
+      await ctx.reply('Извините, произошла ошибка при определении адреса. Пожалуйста, попробуйте еще раз или выберите другой способ.', {
         reply_markup: {
           keyboard: [
-            [{ text: ctx.i18n.t('menu.back') }]
+            [{ text: ctx.i18n.t('self_pickup.send_location'), request_location: true }, { text: ctx.i18n.t('self_pickup.order_here') }],
+            [{ text: ctx.i18n.t('self_pickup.select_branch') }, { text: ctx.i18n.t('menu.back') }]
           ],
           resize_keyboard: true
         }
@@ -228,8 +297,40 @@ const mainMenuHandlers = (bot) => {
     }
   });
 
+  // Обработка кнопки "Подтвердить"
+  bot.hears(match('self_pickup.confirm'), async (ctx) => {
+    try {
+      logger.info(`Пользователь ${ctx.from.id} нажал кнопку "Подтвердить"`);
+      
+      ctx.updateSession({
+        lastAction: 'show_menu_categories',
+        lastActionTime: new Date().toISOString()
+      });
+
+      await ctx.reply(ctx.i18n.t('menu_categories.title'), {
+        parse_mode: 'HTML',
+        reply_markup: {
+          keyboard: [
+            [{ text: ctx.i18n.t('menu_categories.sets') }],
+            [{ text: ctx.i18n.t('menu_categories.snacks') }],
+            [{ text: ctx.i18n.t('menu_categories.burgers') }],
+            [{ text: ctx.i18n.t('menu_categories.chicken') }],
+            [
+              { text: ctx.i18n.t('menu_categories.back') },
+              { text: ctx.i18n.t('menu_categories.basket') }
+            ]
+          ],
+          resize_keyboard: true
+        }
+      });
+    } catch (error) {
+      logger.error(`Ошибка при отображении категорий меню для пользователя ${ctx.from.id}`, error);
+      throw error;
+    }
+  });
+
   // Обработка кнопки "Заказать тут"
-  bot.hears(/🌐.*заказать тут.*|🌐.*order here.*|🌐.*buyurtma berish.*/i, async (ctx) => {
+  bot.hears(match("self_pickup.order_here"), async (ctx) => {
     try {
       logger.info(`Пользователь ${ctx.from.id} выбрал "Заказать тут"`);
       
@@ -239,12 +340,12 @@ const mainMenuHandlers = (bot) => {
       });
 
       // Отправляем сообщение со ссылкой на сайт
-      await ctx.reply('Закажи со своей локацией - https://lesailes.uz/', {
+      await ctx.reply(ctx.i18n.t('self_pickup.order_website'), {
         parse_mode: 'HTML',
         disable_web_page_preview: false,
         reply_markup: {
           inline_keyboard: [
-            [{ text: 'Перейти', url: 'https://lesailes.uz/' }]
+            [{ text: ctx.i18n.t('self_pickup.goTo'), url: 'https://lesailes.uz/' }]
           ]
         }
       });
@@ -254,109 +355,24 @@ const mainMenuHandlers = (bot) => {
     }
   });
 
-  // Обработка кнопки "Выбрать филиал"
-  bot.hears(/выбрать филиал|select branch|filial tanlash/i, async (ctx) => {
+  // Обработка кнопки "Назад" в списке филиалов
+  bot.action('back_to_menu', async (ctx) => {
     try {
-      logger.info(`Пользователь ${ctx.from.id} выбрал "Выбрать филиал"`);
-      
-      ctx.updateSession({
-        lastAction: 'select_branch',
-        lastActionTime: new Date().toISOString()
-      });
-
-      await ctx.reply(ctx.i18n.t('select_city'), {
-        parse_mode: 'HTML',
-        reply_markup: {
-          keyboard: [
-            [{ text: ctx.i18n.t('city.tashkent') }],
-            [{ text: ctx.i18n.t('city.samarkand') }],
-            [{ text: ctx.i18n.t('city.bukhara') }],
-            [{ text: ctx.i18n.t('menu.back') }]
-          ],
-          resize_keyboard: true
-        }
-      });
+      await ctx.deleteMessage();
+      await showMainMenu(ctx);
     } catch (error) {
-      logger.error(`Ошибка при выборе филиала для пользователя ${ctx.from.id}`, error);
-      throw error;
+      logger.error(`Ошибка при возврате в главное меню: ${error.message}`);
     }
   });
-
-  // Обработка выбора города для филиалов
-  bot.hears(/Ташкент|Tashkent|Toshkent|Самарканд|Samarkand|Samarqand|Бухара|Bukhara|Buxoro/i, async (ctx) => {
+  
+  // Обработка кнопки "Назад к филиалам"
+  bot.action('show_branches', async (ctx) => {
     try {
-      const cityText = ctx.message.text;
-      let cityKey;
-      
-      if (/Ташкент|Tashkent|Toshkent/i.test(cityText)) {
-        cityKey = 'tashkent';
-      } else if (/Самарканд|Samarkand|Samarqand/i.test(cityText)) {
-        cityKey = 'samarkand';
-      } else if (/Бухара|Bukhara|Buxoro/i.test(cityText)) {
-        cityKey = 'bukhara';
-      }
-
-      if (!cityKey) return;
-
-      logger.info(`Пользователь ${ctx.from.id} выбрал город ${cityText}`);
-      
-      ctx.updateSession({
-        selectedCity: cityKey,
-        lastAction: 'city_selected',
-        lastActionTime: new Date().toISOString()
-      });
-
-      // Получаем список филиалов для выбранного города
-      const branchButtons = Object.values(ctx.i18n.t(`branches.${cityKey}.list`)).map(branch => [{ text: branch }]);
-      
-      // Добавляем кнопку "Назад"
-      branchButtons.push([{ text: ctx.i18n.t('menu.back') }]);
-
-      await ctx.reply(ctx.i18n.t(`branches.${cityKey}.title`), {
-        parse_mode: 'HTML',
-        reply_markup: {
-          keyboard: branchButtons,
-          resize_keyboard: true
-        }
-      });
+      await handleBranchSelection(ctx);
     } catch (error) {
-      logger.error(`Ошибка при обработке выбора города для пользователя ${ctx.from.id}`, error);
-      throw error;
-    }
-  });
-
-  // Обработка выбора конкретного филиала
-  bot.hears(/🏪.*/i, async (ctx) => {
-    try {
-      const branchName = ctx.message.text;
-      const cityKey = ctx.session.selectedCity;
-      
-      logger.info(`Пользователь ${ctx.from.id} выбрал филиал ${branchName}`);
-      
-      ctx.updateSession({
-        selectedBranch: branchName,
-        lastAction: 'branch_selected',
-        lastActionTime: new Date().toISOString()
-      });
-
-      // Отправляем подтверждение выбора филиала
-      await ctx.reply(ctx.i18n.t('branch_selected', {
-        city: ctx.i18n.t(`city.${ctx.session.selectedCity}`),
-        branch: branchName
-      }), {
-        parse_mode: 'HTML',
-        reply_markup: {
-          keyboard: [
-            [{ text: ctx.i18n.t('menu.back') }]
-          ],
-          resize_keyboard: true
-        }
-      });
-    } catch (error) {
-      logger.error(`Ошибка при выборе филиала для пользователя ${ctx.from.id}`, error);
-      throw error;
+      logger.error(`Ошибка при возврате к списку филиалов: ${error.message}`);
     }
   });
 };
 
-export default mainMenuHandlers; 
+export default mainMenuHandlers;

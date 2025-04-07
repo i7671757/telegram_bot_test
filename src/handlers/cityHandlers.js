@@ -1,9 +1,10 @@
 import logger from '../utils/logger.js';
 import { setCommandsMenu } from '../utils/commands.js';
+const {match} =require("telegraf-i18n") 
 
 // Обработка выбора города
 const cityHandlers = (bot) => {
-  bot.hears([/Ташкент/i, /Tashkent/i, /Toshkent/i], async (ctx) => {
+  bot.hears(match("city.tashkent"), async (ctx) => {
     try {
       const city = 'tashkent';
       await handleCitySelection(ctx, city);
@@ -14,7 +15,7 @@ const cityHandlers = (bot) => {
     }
   });
   
-  bot.hears([/Самарканд/i, /Samarkand/i, /Samarqand/i], async (ctx) => {
+  bot.hears(match("city.samarkand"), async (ctx) => {
     try {
       const city = 'samarkand';
       await handleCitySelection(ctx, city);
@@ -25,7 +26,7 @@ const cityHandlers = (bot) => {
     }
   });
   
-  bot.hears([/Бухара/i, /Bukhara/i, /Buxoro/i], async (ctx) => {
+  bot.hears(match("city.bukhara"), async (ctx) => {
     try {
       const city = 'bukhara';
       await handleCitySelection(ctx, city);
@@ -81,9 +82,12 @@ async function showMainMenu(ctx) {
       parse_mode: 'HTML',
       reply_markup: {
         keyboard: [
-          [{ text: ctx.i18n.t('main_menu.order') }, { text: ctx.i18n.t('main_menu.order_history') }],
-          [{ text: ctx.i18n.t('main_menu.aksiya') }, { text: ctx.i18n.t('main_menu.join_team') }],
-          [{ text: ctx.i18n.t('main_menu.contact') }, { text: ctx.i18n.t('settings.settings') }],
+          [{ text: ctx.i18n.t('main_menu.order') }],
+          [{ text: ctx.i18n.t('main_menu.order_history') }],
+          [{ text: ctx.i18n.t('main_menu.select_branch') }],
+          [{ text: ctx.i18n.t('settings.settings') }, { text: ctx.i18n.t('main_menu.aksiya') }],
+          [{ text: ctx.i18n.t('main_menu.join_team') },{ text: ctx.i18n.t('main_menu.contact') }],
+        
           // [{ text: ctx.i18n.t('menu.back') }]
         ],
         resize_keyboard: true

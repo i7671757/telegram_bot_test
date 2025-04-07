@@ -1,10 +1,11 @@
 import logger from '../utils/logger.js';
 import { setCommandsMenu } from '../utils/commands.js';
 import { showMainMenu } from './cityHandlers.js';
+const {match} =require("telegraf-i18n") 
 
 // Обработка выбора филиала
 const branchHandlers = (bot) => {
-  bot.hears(/^(Tashkent|Samarkand|Bukhara) Branch \d+$/i, async (ctx) => {
+  bot.hears(match("branch.branch"), async (ctx) => {
     try {
       const branchName = ctx.message.text;
       
@@ -49,7 +50,7 @@ const branchHandlers = (bot) => {
   });
 
   // Обработка возврата в главное меню
-  bot.hears(/Главное меню|Main menu/i, async (ctx) => {
+  bot.hears(match("main_menu.main"), async (ctx) => {
     try {
       logger.info(`Пользователь ${ctx.from.id} вернулся в главное меню`);
       

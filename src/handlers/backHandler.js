@@ -1,10 +1,11 @@
 import logger from '../utils/logger.js';
 import { setCommandsMenu } from '../utils/commands.js';
 import { showMainMenu } from './cityHandlers.js';
+const {match} =require("telegraf-i18n") 
 
 // Обработчик для кнопки "Назад"
 const backHandler = (bot) => {
-  bot.hears(/◀️ Назад|◀️ Back|◀️ Ortga/, async (ctx) => {
+  bot.hears(match("menu.back"), async (ctx) => {
     try {
       logger.info(`Пользователь ${ctx.from.id} нажал кнопку "Назад"`);
       
