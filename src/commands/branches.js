@@ -1,23 +1,20 @@
 import { Markup } from 'telegraf';
 
-export async function getBranchesKeyboard() {
+export async function getBranchesKeyboard(cityId = null) {
     try {
         const response = await fetch('https://api.lesailes.uz/api/terminals');
         const data = await response.json();
         
         if (data.success) {
-            // Фильтруем только активные филиалы и создаем кнопки
-            const buttons = data.data
-                .filter(terminal => terminal.active && terminal.name)
-                .map(terminal => [Markup.button.callback(
-                    terminal.name, 
-                    `select_branch_${terminal.id}`
-                )]);
-
-            // Добавляем кнопку "Назад" в конец
-            buttons.push([Markup.button.callback('⬅️ Назад', 'back_to_menu')]);
-
-            return Markup.inlineKeyboard(buttons);
+            // Фильтруем только активные филиалы
+            let branches = data.data.filter(terminal => terminal.active && terminal.name);
+            
+            // Если передан cityId, фильтруем по нему
+            if (cityId) {
+                branches = branches.filter(branch => branch.city_id === cityId);
+            }
+            
+            return branches;
         }
         return null;
     } catch (error) {
@@ -27,12 +24,98 @@ export async function getBranchesKeyboard() {
 }
 
 export async function handleBranchSelection(ctx) {
-    const keyboard = await getBranchesKeyboard();
-    if (keyboard) {
-        await ctx.reply('Выберите филиал Les Ailes:', keyboard);
-    } else {
-        await ctx.reply('Извините, не удалось загрузить список филиалов. Попробуйте позже.');
+    try {
+        // Получаем ID города из сессии, если он есть
+        const cityId = ctx.session?.selectedCityId ? parseInt(ctx.session.selectedCityId) : null;
+        
+        // Получаем филиалы с фильтрацией по городу, если указан
+        const branches = await getBranchesKeyboard(cityId);
+        
+        if (branches && branches.length > 0) {
+            // Создаем клавиатуру с кнопками филиалов (по 2 в строке)
+            const keyboard = [];
+            
+            for (let i = 0; i < branches.length; i += 2) {
+                const row = [];
+                row.push({ text: `🏪 ${branches[i].name}` });
+                
+                if (i + 1 < branches.length) {
+                    row.push({ text: `🏪 ${branches[i + 1].name}` });
+                }
+                
+                keyboard.push(row);
+            }
+            
+            // Добавляем кнопку "Назад"
+            keyboard.push([{ text: ctx.i18n.t('menu.back') }]);
+            
+            await ctx.reply(ctx.i18n.t('select_branch'), {
+                reply_markup: {
+                    keyboard: keyboard,
+                    resize_keyboard: true
+                }
+            });
+            
+            // Сохраняем данные о филиалах и предыдущее действие в сессии пользователя
+            const previousAction = ctx.session?.lastAction;
+            
+            ctx.updateSession({
+                availableBranches: branches,
+                previousAction: previousAction,
+                lastAction: 'branches_list_shown',
+                lastActionTime: new Date().toISOString()
+            });
+        } else {
+            await ctx.reply(ctx.i18n.t('error.branches_load_failed'));
+        }
+    } catch (error) {
+        console.error('Error displaying branches:', error);
+        await ctx.reply(ctx.i18n.t('error.branches_load_failed'));
     }
+}
+
+// Function to fetch categories from API
+export async function getCategories() {
+    try {
+        const response = await fetch('https://api.lesailes.uz/api/categories/root');
+        const data = await response.json();
+        
+        if (data.success) {
+            // Фильтруем только активные категории
+            return data.data.filter(category => category.active);
+        }
+        return null;
+    } catch (error) {
+        console.error('Error fetching categories:', error);
+        return null;
+    }
+}
+
+// Function to create categories keyboard
+export function createCategoriesKeyboard(categories) {
+    const keyboard = [];
+    
+    // Group categories by 2 in a row
+    for (let i = 0; i < categories.length; i += 2) {
+        const row = [];
+        const emoji = categories[i].icon || '🍽️';
+        row.push({ text: `${emoji} ${categories[i].attribute_data.name.chopar.ru}` });
+        
+        if (i + 1 < categories.length) {
+            const nextEmoji = categories[i + 1].icon || '🍽️';
+            row.push({ text: `${nextEmoji} ${categories[i + 1].attribute_data.name.chopar.ru}` });
+        }
+        
+        keyboard.push(row);
+    }
+    
+    // Add back and cart buttons
+    keyboard.push([
+        { text: '🛒 Корзина' },
+        { text: '⬅️ Назад' }
+    ]);
+    
+    return keyboard;
 }
 
 export async function handleBranchCallback(ctx) {
@@ -52,17 +135,6 @@ export async function handleBranchCallback(ctx) {
                     message += '🏃 Только самовывоз\n';
                 }
                 
-                // Если есть координаты, добавляем кнопку с локацией
-                const buttons = [];
-                if (branch.latitude && branch.longitude) {
-                    buttons.push([
-                        Markup.button.url(
-                            '📍 Показать на карте',
-                            `https://maps.google.com/?q=${branch.latitude},${branch.longitude}`
-                        )
-                    ]);
-                }
-                
                 // Сохраняем выбранный филиал в сессии
                 ctx.updateSession({
                     selectedBranch: branch.id,
@@ -72,15 +144,51 @@ export async function handleBranchCallback(ctx) {
                     lastAction: 'branch_selected',
                     lastActionTime: new Date().toISOString()
                 });
-                
-                // Проверяем, был ли выбор филиала из меню самовывоза
-                if (ctx.session.lastAction === 'select_branch_pickup') {
-                    buttons.push([Markup.button.callback(ctx.i18n.t('self_pickup.confirm_order'), 'proceed_to_order')]);
+
+                // Сначала отправляем информацию о выбранном филиале
+                await ctx.reply(message);
+
+                // Получаем категории
+                const categories = await getCategories();
+                if (categories && categories.length > 0) {
+                    const keyboard = [];
+                    
+                    // Добавляем эмодзи к названиям категорий
+                    for (let i = 0; i < categories.length; i += 2) {
+                        const row = [];
+                        const emoji = categories[i].icon || '🍽️'; // используем эмодзи из API или дефолтное
+                        row.push({ text: `${emoji} ${categories[i].attribute_data.name.chopar.ru}` });
+                        
+                        if (i + 1 < categories.length) {
+                            const nextEmoji = categories[i + 1].icon || '🍽️';
+                            row.push({ text: `${nextEmoji} ${categories[i + 1].attribute_data.name.chopar.ru}` });
+                        }
+                        
+                        keyboard.push(row);
+                    }
+                    
+                    // Добавляем кнопки корзины и назад
+                    keyboard.push([
+                        { text: '🛒 Корзина' },
+                        { text: '⬅️ Назад' }
+                    ]);
+                    
+                    // Отправляем меню категорий
+                    await ctx.reply('Выберите категорию:', {
+                        reply_markup: {
+                            keyboard: keyboard,
+                            resize_keyboard: true
+                        }
+                    });
+
+                    // Обновляем сессию с доступными категориями
+                    ctx.updateSession({
+                        availableCategories: categories,
+                        lastAction: 'categories_shown'
+                    });
+                } else {
+                    await ctx.reply('Извините, не удалось загрузить категории. Попробуйте позже.');
                 }
-                
-                buttons.push([Markup.button.callback('⬅️ Назад к филиалам', 'show_branches')]);
-                
-                await ctx.editMessageText(message, Markup.inlineKeyboard(buttons));
             }
         }
     } catch (error) {
@@ -115,5 +223,52 @@ export async function handleProceedToOrder(ctx) {
     } catch (error) {
         console.error('Error proceeding to order:', error);
         await ctx.reply('Произошла ошибка при переходе к заказу. Попробуйте позже.');
+    }
+}
+
+export async function handleCategorySelection(ctx) {
+    try {
+        const categories = await getCategories();
+        
+        if (categories && categories.length > 0) {
+            // Создаем клавиатуру с кнопками категорий (по 2 в строке)
+            const keyboard = [];
+            
+            for (let i = 0; i < categories.length; i += 2) {
+                const row = [];
+                row.push({ text: categories[i].attribute_data.name.chopar.ru });
+                
+                if (i + 1 < categories.length) {
+                    row.push({ text: categories[i + 1].attribute_data.name.chopar.ru });
+                }
+                
+                keyboard.push(row);
+            }
+            
+            // Добавляем кнопку "Назад"
+            keyboard.push([{ text: ctx.i18n.t('menu.back') }]);
+            
+            await ctx.reply(ctx.i18n.t('select_category'), {
+                reply_markup: {
+                    keyboard: keyboard,
+                    resize_keyboard: true
+                }
+            });
+            
+            // Сохраняем данные о категориях и предыдущее действие в сессии пользователя
+            const previousAction = ctx.session?.lastAction;
+            
+            ctx.updateSession({
+                availableCategories: categories,
+                previousAction: previousAction,
+                lastAction: 'categories_list_shown',
+                lastActionTime: new Date().toISOString()
+            });
+        } else {
+            await ctx.reply(ctx.i18n.t('error.categories_load_failed'));
+        }
+    } catch (error) {
+        console.error('Error displaying categories:', error);
+        await ctx.reply(ctx.i18n.t('error.categories_load_failed'));
     }
 } 

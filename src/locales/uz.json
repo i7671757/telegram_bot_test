@@ -26,6 +26,13 @@
     "tashkent": "Toshkent",
     "samarkand": "Samarqand",
     "bukhara": "Buxoro",
+    "fergana": "Fergana",
+    "andijan": "Andijon",
+    "margilan": "Marg'ilon",
+    "qoqand": "Qo'qon",
+    "urganch": "Urganch",
+    "nukus": "Nukus",
+    "chirchiq": "Chirchiq",
     "unknown": "Kechirasiz, men bu shaharni bilmayman. Iltimos, ro'yxatdan shahar tanlang."
   },
   "commands": {
@@ -165,12 +172,16 @@
     "phone": "📞 Telefon",
     "working_hours": "🕒 Ish vaqti",
     "make_order": "Buyurtma berish uchun \"Buyurtma berish\" tugmasini bosing",
-    "location_sent": "📍 Filial manzili yuborildi"
+    "location_sent": "📍 Filial manzili yuborildi",
+    "view_complete": "Filial haqidagi ma'lumot yuqorida ko'rsatilgan."
   },
   "error": {
     "city_selection": "Shaharni tanlashda xatolik yuz berdi. Iltimos, qaytadan urinib ko'ring.",
     "language_selection": "Tilni tanlashda xatolik yuz berdi. Iltimos, qaytadan urinib ko'ring.",
     "i18n_not_initialized": "Tarjimalarni ishga tushirishda xatolik yuz berdi. Iltimos, keyinroq qaytadan urinib ko'ring.",
-    "unknown": "Noma'lum xatolik yuz berdi. Iltimos, keyinroq qaytadan urinib ko'ring."
+    "unknown": "Noma'lum xatolik yuz berdi. Iltimos, keyinroq qaytadan urinib ko'ring.",
+    "branches_load_failed": "Kechirasiz, filiallar ro'yxatini yuklab bo'lmadi. Iltimos, keyinroq urinib ko'ring.",
+    "branch_not_found": "Kechirasiz, tanlangan filial haqida ma'lumot topilmadi. Iltimos, qayta urinib ko'ring.",
+    "branch_location_failed": "Kechirasiz, filial koordinatalarini olib bo'lmadi."
   }
 } 

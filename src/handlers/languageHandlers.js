@@ -59,11 +59,11 @@ async function handleLanguageSelection(ctx, lang) {
       parse_mode: 'HTML',
       reply_markup: {
         keyboard: [
-          [
-            { text: ctx.i18n.t('city.tashkent') },
-            { text: ctx.i18n.t('city.samarkand') },
-            { text: ctx.i18n.t('city.bukhara') }
-          ],
+          [ { text: ctx.i18n.t('city.tashkent') }, { text: ctx.i18n.t('city.samarkand') }],
+          [ { text: ctx.i18n.t('city.bukhara') }, { text: ctx.i18n.t('city.fergana') }],
+          [ { text: ctx.i18n.t('city.andijan') }, { text: ctx.i18n.t('city.margilan') }],
+          [ { text: ctx.i18n.t('city.qoqand') }, { text: ctx.i18n.t('city.urganch') }],
+          [ { text: ctx.i18n.t('city.nukus') }, {text: ctx.i18n.t('city.chirchiq')}],
           [{ text: ctx.i18n.t('menu.back') }]
         ],
         resize_keyboard: true

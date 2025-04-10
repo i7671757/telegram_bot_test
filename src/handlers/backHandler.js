@@ -9,6 +9,39 @@ const backHandler = (bot) => {
     try {
       logger.info(`Пользователь ${ctx.from.id} нажал кнопку "Назад"`);
       
+      // Проверяем lastAction для определения текущего состояния
+      const lastAction = ctx.session?.lastAction || null;
+      
+      // Специальная обработка для возврата из меню филиалов
+      if (lastAction === 'branches_list_shown') {
+        // Если предыдущее действие было выбор филиалов из самовывоза, возвращаемся в меню самовывоза
+        if (ctx.session?.previousAction === 'select_branch_pickup') {
+          logger.info(`Возврат в меню самовывоза для пользователя ${ctx.from.id}`);
+          
+          ctx.updateSession({
+            lastAction: 'self_pickup',
+            lastActionTime: new Date().toISOString()
+          });
+          
+          await ctx.reply(ctx.i18n.t('self_pickup.select_option'), {
+            parse_mode: 'HTML',
+            reply_markup: {
+              keyboard: [
+                [{ text: ctx.i18n.t('self_pickup.send_location'), request_location: true }, { text: ctx.i18n.t('self_pickup.order_here') }],
+                [{ text: ctx.i18n.t('self_pickup.select_branch') }, { text: ctx.i18n.t('menu.back') }]
+              ],
+              resize_keyboard: true
+            }
+          });
+          
+          return;
+        } else {
+          // Если это был просто просмотр филиалов из главного меню, возвращаемся в главное меню
+          await handleBackToMainMenu(ctx);
+          return;
+        }
+      }
+      
       // Проверяем наличие необходимых методов
       if (!ctx.getPreviousState) {
         logger.error(`Метод getPreviousState не найден для пользователя ${ctx.from.id}`);
@@ -149,9 +182,16 @@ async function handleBackToCitySelection(ctx, data) {
       reply_markup: {
         keyboard: [[
           { text: ctx.i18n.t('city.tashkent') },
-          { text: ctx.i18n.t('city.samarkand') },
-          { text: ctx.i18n.t('city.bukhara') }
-        ]],
+          { text: ctx.i18n.t('city.samarkand') }],
+          [ { text: ctx.i18n.t('city.bukhara') },
+          { text: ctx.i18n.t('city.fergana') }],
+          [ { text: ctx.i18n.t('city.andijan') },
+            { text: ctx.i18n.t('city.margilan') }],
+          [ { text: ctx.i18n.t('city.qoqand') },
+          { text: ctx.i18n.t('city.urganch') }],
+          [ { text: ctx.i18n.t('city.nukus') },
+          { text: ctx.i18n.t('city.chirchiq') }],
+        ],
         resize_keyboard: true
       }
     });

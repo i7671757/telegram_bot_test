@@ -26,6 +26,13 @@
     "tashkent": "Tashkent",
     "samarkand": "Samarkand",
     "bukhara": "Bukhara",
+    "fergana": "Fergana",
+    "andijan": "Andijan",
+    "margilan": "Margilan",
+    "qoqand": "Qoqand",
+    "urganch": "Urganch",
+    "nukus": "Nukus",
+    "chirchiq": "Chirchiq",
     "unknown": "Sorry, I don't know this city. Please select a city from the list."
   },
   "commands": {
@@ -164,13 +171,17 @@
     "address": "📍 Address",
     "phone": "📞 Phone",
     "working_hours": "🕒 Working Hours",
-    "make_order": "Click \"Make Order\" to place an order",
-    "location_sent": "📍 Branch location sent"
+    "make_order": "Click \"Make Order\" button to place an order",
+    "location_sent": "📍 Branch location sent",
+    "view_complete": "Branch information is displayed above."
   },
   "error": {
     "city_selection": "An error occurred while selecting the city. Please try again.",
     "language_selection": "An error occurred while selecting the language. Please try again.",
     "i18n_not_initialized": "An error occurred while initializing translations. Please try again later.",
-    "unknown": "An unknown error occurred. Please try again later."
+    "unknown": "An unknown error occurred. Please try again later.",
+    "branches_load_failed": "Sorry, we couldn't load the list of branches. Please try again later.",
+    "branch_not_found": "Sorry, we couldn't find information about the selected branch. Please try again.",
+    "branch_location_failed": "Sorry, we couldn't get the branch coordinates."
   }
 } 

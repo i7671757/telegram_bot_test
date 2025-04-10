@@ -36,6 +36,85 @@ const cityHandlers = (bot) => {
       // Let the error handler middleware handle the error
     }
   });
+
+  bot.hears(match("city.fergana"), async (ctx) => {
+    try {
+      const city = 'fergana';
+      await handleCitySelection(ctx, city);
+      logger.info(`Пользователь ${ctx.from.id} выбрал город Фергана`);
+    } catch (error) {
+      logger.error(`Ошибка при выборе города Фергана для пользователя ${ctx.from.id}`, error);
+      // Let the error handler middleware handle the error
+    }
+  });
+
+  bot.hears(match("city.andijan"), async (ctx) => {
+    try {
+      const city = 'andijan';
+      await handleCitySelection(ctx, city);
+      logger.info(`Пользователь ${ctx.from.id} выбрал город Андижан`);
+    } catch (error) {
+      logger.error(`Ошибка при выборе города Андижан для пользователя ${ctx.from.id}`, error);
+      // Let the error handler middleware handle the error
+    }
+  });
+
+  bot.hears(match("city.margilan"), async (ctx) => {
+    try {
+      const city = 'margilan';
+      await handleCitySelection(ctx, city);
+      logger.info(`Пользователь ${ctx.from.id} выбрал город Маргилан`);
+    } catch (error) {
+      logger.error(`Ошибка при выборе города Маргилан для пользователя ${ctx.from.id}`, error);
+      // Let the error handler middleware handle the error
+    }
+  });
+
+  bot.hears(match("city.chirchiq"), async (ctx) => {
+    try {
+      const city = 'chirchiq';
+      await handleCitySelection(ctx, city);
+      logger.info(`Пользователь ${ctx.from.id} выбрал город Чирчик`);
+    } catch (error) {
+      logger.error(`Ошибка при выборе города Чирчик для пользователя ${ctx.from.id}`, error);
+      // Let the error handler middleware handle the error
+    }
+  });
+
+  bot.hears(match("city.qoqand"), async (ctx) => {  
+    try {
+      const city = 'qoqand';
+      await handleCitySelection(ctx, city);
+      logger.info(`Пользователь ${ctx.from.id} выбрал город Коканд`);
+    } catch (error) {
+      logger.error(`Ошибка при выборе города Коканд для пользователя ${ctx.from.id}`, error);   
+      // Let the error handler middleware handle the error
+    }
+  });
+
+  bot.hears(match("city.urganch"), async (ctx) => {
+    try {
+      const city = 'urganch';
+      await handleCitySelection(ctx, city);
+      logger.info(`Пользователь ${ctx.from.id} выбрал город Ургенч`);
+    } catch (error) {
+      logger.error(`Ошибка при выборе города Ургенч для пользователя ${ctx.from.id}`, error);
+      // Let the error handler middleware handle the error
+    }
+  });
+
+  bot.hears(match("city.nukus"), async (ctx) => {
+    try {
+      const city = 'nukus';
+      await handleCitySelection(ctx, city);
+      logger.info(`Пользователь ${ctx.from.id} выбрал город Нукус`);
+    } catch (error) {
+      logger.error(`Ошибка при выборе города Нукус для пользователя ${ctx.from.id}`, error);
+      // Let the error handler middleware handle the error
+    }
+  });
+  
+  
 };
 
 // Функция обработки выбора города
@@ -45,8 +124,46 @@ async function handleCitySelection(ctx, city) {
       throw new Error('Session middleware not properly initialized');
     }
 
+    // Определяем ID города
+    let cityId;
+    switch(city) {
+      case 'tashkent':
+        cityId = 2;
+        break;
+      case 'fergana':
+        cityId = 5;
+        break;
+      case 'bukhara':
+        cityId = 6;
+        break;
+      case 'andijan':
+        cityId = 1;
+        break;
+      case 'samarkand':
+        cityId = 3;
+        break;
+      case 'chirchiq':
+        cityId = 22;
+        break;
+      case 'margilan':
+        cityId = 18;
+        break;
+      case 'qoqand':
+        cityId = 23;
+        break;
+      case 'urganch':
+        cityId = 21;
+        break;
+      case 'nukus':
+        cityId = 19;
+        break;
+      default:
+        cityId = null;
+    }
+
     ctx.updateSession({
       selectedCity: city,
+      selectedCityId: cityId,
       lastAction: 'city_selection',
       lastActionTime: new Date().toISOString()
     });
@@ -84,7 +201,6 @@ async function showMainMenu(ctx) {
         keyboard: [
           [{ text: ctx.i18n.t('main_menu.order') }],
           [{ text: ctx.i18n.t('main_menu.order_history') }],
-          [{ text: ctx.i18n.t('main_menu.select_branch') }],
           [{ text: ctx.i18n.t('settings.settings') }, { text: ctx.i18n.t('main_menu.aksiya') }],
           [{ text: ctx.i18n.t('main_menu.join_team') },{ text: ctx.i18n.t('main_menu.contact') }],
         
