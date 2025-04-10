@@ -1,0 +1,30 @@
+{
+  "1034682": {
+    "language": "ru",
+    "navigationHistory": [
+      {
+        "action": "language_change",
+        "data": {
+          "language": "ru",
+          "previousAction": "city_selection"
+        }
+      },
+      {
+        "action": "city_selection",
+        "data": {
+          "language": "ru",
+          "selectedCity": "tashkent",
+          "previousAction": "main_menu"
+        }
+      }
+    ],
+    "startTime": "2025-04-10T09:41:02.210Z",
+    "visits": 1,
+    "languageSelected": true,
+    "lastAction": "main_menu",
+    "lastActionTime": "2025-04-10T09:41:05.729Z",
+    "selectedCity": "tashkent",
+    "selectedCityId": 2,
+    "previousAction": "city_selection"
+  }
+}

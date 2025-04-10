@@ -55,7 +55,7 @@ const commandHandlers = (bot) => {
     try {
       const oldVisits = ctx.session.visits || 0;
       
-      ctx.updateSession({
+      await ctx.updateSession({
         language: 'ru',
         visits: oldVisits,
         reset: true,
