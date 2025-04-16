@@ -8,7 +8,7 @@ const sessionMiddleware = async (ctx, next) => {
   
   // Инициализируем сессию, если она не существует
   if (!ctx.session) {
-    ctx.session = { language: 'ru', navigationHistory: [] };
+    ctx.session = { languageCode: 'en', navigationHistory: [] };
   }
   
   // Добавляем методы для работы с сессией
@@ -21,8 +21,8 @@ const sessionMiddleware = async (ctx, next) => {
     return await getPreviousState(userId);
   };
   
-  if (ctx.session.language) {
-    ctx.i18n.locale(ctx.session.language);
+  if (ctx.session.languageCode) {
+    ctx.i18n.locale(ctx.session.languageCode);
   }
   
   return next();

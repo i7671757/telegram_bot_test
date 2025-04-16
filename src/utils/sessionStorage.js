@@ -5,7 +5,7 @@ import logger from './logger.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const SESSION_FILE = path.join(__dirname, '../../sessions.json');
+const SESSION_FILE = path.join(__dirname, '../../session.json');
 
 // Создаем директорию для данных, если она не существует
 async function ensureDataDirectory() {
@@ -46,7 +46,7 @@ async function saveSessions(sessions) {
 // Обновление сессии
 async function updateSession(userId, updateData) {
     const sessions = await loadSessions();
-    const currentSession = sessions[userId] || { language: 'ru', navigationHistory: [] };
+    const currentSession = sessions[userId] || { languageCode: 'en', navigationHistory: [] };
     
     // Если есть информация о последнем действии, добавляем его в историю навигации
     if (updateData.lastAction && !updateData.isGoingBack) {
@@ -56,30 +56,49 @@ async function updateSession(userId, updateData) {
         const currentState = {
             action: currentSession.lastAction,
             data: {
-                language: currentSession.language,
+                languageCode: currentSession.languageCode,
                 selectedCity: currentSession.selectedCity,
                 selectedBranch: currentSession.selectedBranch,
-                previousAction: updateData.lastAction
+                lastAction: currentSession.lastAction,
+                previousAction: currentSession.previousAction
             }
         };
         
-        // Добавляем в историю только если было какое-то действие
-        if (currentState.action) {
+        // Добавляем в историю только если было какое-то действие и оно отличается от предыдущего
+        if (currentState.action && 
+            (!navigationHistory.length || 
+             navigationHistory[navigationHistory.length - 1].action !== currentState.action)) {
+            
             navigationHistory.push(currentState);
             
-            // Ограничиваем историю до 10 записей
-            if (navigationHistory.length > 10) {
+            // Ограничиваем историю до 5 записей
+            if (navigationHistory.length > 5) {
                 navigationHistory.shift();
             }
-            
-            updateData.navigationHistory = navigationHistory;
         }
+        
+        updateData.navigationHistory = navigationHistory;
     }
     
-    const updatedSession = { ...currentSession, ...updateData };
-    sessions[userId] = updatedSession;
+    // Если это возврат назад, не обновляем историю
+    if (!updateData.isGoingBack) {
+        const updatedSession = { 
+            ...currentSession, 
+            ...updateData,
+            previousAction: currentSession.lastAction 
+        };
+        sessions[userId] = updatedSession;
+    } else {
+        // При возврате назад обновляем только необходимые поля
+        sessions[userId] = {
+            ...currentSession,
+            lastAction: updateData.lastAction,
+            lastActionTime: updateData.lastActionTime
+        };
+    }
+    
     await saveSessions(sessions);
-    return updatedSession;
+    return sessions[userId];
 }
 
 // Получение предыдущего состояния

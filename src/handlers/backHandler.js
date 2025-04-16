@@ -53,18 +53,11 @@ const backHandler = (bot) => {
         return;
       }
       
-      const previousState = ctx.getPreviousState();
+      const previousState = await ctx.getPreviousState();
       
       if (!previousState) {
         logger.warn(`Пользователь ${ctx.from.id} попытался вернуться назад, но история навигации пуста`);
-        await ctx.reply(ctx.i18n.t('navigation.history_empty'), {
-          reply_markup: {
-            keyboard: [[
-              { text: ctx.i18n.t('menu.main') }
-            ]],
-            resize_keyboard: true
-          }
-        });
+        await handleBackToMainMenu(ctx);
         return;
       }
       
@@ -85,40 +78,11 @@ const backHandler = (bot) => {
           break;
           
         case 'main_menu':
-          // Возвращаемся к предыдущему состоянию из истории
-          if (previousState.data && previousState.data.previousAction) {
-            switch (previousState.data.previousAction) {
-              case 'city_selection':
-                await handleBackToCitySelection(ctx, previousState.data);
-                break;
-              case 'branch_selection':
-                await handleBackToBranchSelection(ctx, previousState.data);
-                break;
-              default:
-                await handleBackToMainMenu(ctx);
-            }
-          } else {
-            await handleBackToMainMenu(ctx);
-          }
-          break;
-          
-        case 'order_start':
-          await handleBackToMainMenu(ctx);
-          break;
-          
-        case 'order_history':
-          await handleBackToMainMenu(ctx);
-          break;
-          
-        case 'aksiya':
-          await handleBackToMainMenu(ctx);
-          break;
-          
-        case 'join_team':
-          await handleBackToMainMenu(ctx);
-          break;
-          
-        case 'contact':
+        case 'back_to_main':
+        case 'open_settings':
+        case 'settings_language':
+        case 'settings_city':
+        case 'settings_branch':
           await handleBackToMainMenu(ctx);
           break;
           
@@ -181,16 +145,11 @@ async function handleBackToCitySelection(ctx, data) {
     await ctx.reply(ctx.i18n.t('select_city'), {
       reply_markup: {
         keyboard: [[
-          { text: ctx.i18n.t('city.tashkent') },
-          { text: ctx.i18n.t('city.samarkand') }],
-          [ { text: ctx.i18n.t('city.bukhara') },
-          { text: ctx.i18n.t('city.fergana') }],
-          [ { text: ctx.i18n.t('city.andijan') },
-            { text: ctx.i18n.t('city.margilan') }],
-          [ { text: ctx.i18n.t('city.qoqand') },
-          { text: ctx.i18n.t('city.urganch') }],
-          [ { text: ctx.i18n.t('city.nukus') },
-          { text: ctx.i18n.t('city.chirchiq') }],
+          { text: ctx.i18n.t('city.tashkent') }, { text: ctx.i18n.t('city.samarkand') }],
+          [ { text: ctx.i18n.t('city.bukhara') }, { text: ctx.i18n.t('city.fergana') }],
+          [ { text: ctx.i18n.t('city.andijan') }, { text: ctx.i18n.t('city.margilan') }],
+          [ { text: ctx.i18n.t('city.qoqand') }, { text: ctx.i18n.t('city.urganch') }],
+          [ { text: ctx.i18n.t('city.nukus') }, { text: ctx.i18n.t('city.chirchiq') }],
         ],
         resize_keyboard: true
       }

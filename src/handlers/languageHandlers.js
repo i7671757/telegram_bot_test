@@ -41,34 +41,46 @@ async function handleLanguageSelection(ctx, lang) {
       await ctx.reply(ctx.i18n.t('error.i18n_not_initialized'));
       return;
     }
+
+    // Устанавливаем язык в i18n
+    ctx.i18n.locale(lang);
     
-    ctx.updateSession({
-      language: lang,
+    // Обновляем сессию
+    ctx.session = {
+      ...ctx.session,
+      languageCode: lang,
       languageSelected: true,
       lastAction: 'language_change',
       lastActionTime: new Date().toISOString()
-    });
+    };
     
-    ctx.i18n.locale(lang);
+    console.log('Language set to:', lang);
+    // console.log('Updated session:', ctx.session);
+    
+    // Обновляем меню команд
     await setCommandsMenu(ctx);
     
-    const userName = ctx.from?.first_name || '';
-    logger.debug(`Отправка меню выбора города для пользователя ${ctx.from.id}`);
+    // Создаем клавиатуру с городами
+    const cityKeyboard = [
+      [{ text: ctx.i18n.t('city.tashkent') }, { text: ctx.i18n.t('city.samarkand') }],
+      [{ text: ctx.i18n.t('city.bukhara') }, { text: ctx.i18n.t('city.fergana') }],
+      [{ text: ctx.i18n.t('city.andijan') }, { text: ctx.i18n.t('city.margilan') }],
+      [{ text: ctx.i18n.t('city.qoqand') }, { text: ctx.i18n.t('city.urganch') }],
+      [{ text: ctx.i18n.t('city.nukus') }, { text: ctx.i18n.t('city.chirchiq') }],
+      [{ text: ctx.i18n.t('menu.back') }]
+    ];
     
-    await ctx.reply(`<b>${ctx.i18n.t('select_city', { name: userName })}</b>`, {
+    // Отправляем сообщение с клавиатурой
+    await ctx.reply(ctx.i18n.t('select_city'), {
       parse_mode: 'HTML',
       reply_markup: {
-        keyboard: [
-          [ { text: ctx.i18n.t('city.tashkent') }, { text: ctx.i18n.t('city.samarkand') }],
-          [ { text: ctx.i18n.t('city.bukhara') }, { text: ctx.i18n.t('city.fergana') }],
-          [ { text: ctx.i18n.t('city.andijan') }, { text: ctx.i18n.t('city.margilan') }],
-          [ { text: ctx.i18n.t('city.qoqand') }, { text: ctx.i18n.t('city.urganch') }],
-          [ { text: ctx.i18n.t('city.nukus') }, {text: ctx.i18n.t('city.chirchiq')}],
-          [{ text: ctx.i18n.t('menu.back') }]
-        ],
-        resize_keyboard: true
+        keyboard: cityKeyboard,
+        resize_keyboard: true,
+        one_time_keyboard: false
       }
     });
+    
+    logger.debug(`Язык установлен на ${lang} для пользователя ${ctx.from.id}`);
   } catch (error) {
     logger.error(`Ошибка в handleLanguageSelection для языка ${lang}: ${error.message}`);
     await ctx.reply(ctx.i18n.t('error.language_selection'));

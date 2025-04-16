@@ -73,10 +73,13 @@ async function showTerminalDetails(ctx, terminalId) {
             return;
         }
         
+        // Get user's language preference
+        const userLanguage = ctx.session?.languageCode || 'ru';
+        
         // Format terminal details
         let details = `🏪 *Детальная информация о терминале*\n\n`;
         details += `*ID*: ${terminal.id}\n`;
-        details += `*Название*: ${terminal.name || 'Нет данных'}\n`;
+        details += `*Название*: ${getTerminalName(terminal, userLanguage)}\n`;
         details += `*Адрес*: ${terminal.desc || 'Нет данных'}\n`;
         details += `*Город ID*: ${terminal.city_id || 'Нет данных'}\n`;
         details += `*Статус*: ${terminal.active ? '✅ Активен' : '❌ Неактивен'}\n`;
@@ -139,4 +142,15 @@ function formatTime(isoString) {
     } catch (error) {
         return 'Нет данных';
     }
+}
+
+/**
+ * Gets the appropriate terminal name based on language code
+ * @param {Object} terminal - Terminal object
+ * @param {string} languageCode - User's language preference
+ * @returns {string} - Terminal name in the appropriate language
+ */
+function getTerminalName(terminal, languageCode) {
+    const nameKey = `name_${languageCode}`;
+    return terminal[nameKey] || terminal.name || 'Без названия';
 } 

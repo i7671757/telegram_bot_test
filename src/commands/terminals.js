@@ -103,6 +103,17 @@ export async function handleShowActiveTerminals(ctx) {
 }
 
 /**
+ * Gets the appropriate terminal name based on language code
+ * @param {Object} terminal - Terminal object
+ * @param {string} languageCode - User's language preference
+ * @returns {string} - Terminal name in the appropriate language
+ */
+function getTerminalName(terminal, languageCode) {
+    const nameKey = `name_${languageCode}`;
+    return terminal[nameKey] || terminal.name || 'Без названия';
+}
+
+/**
  * Shows paginated terminals
  * @param {Object} ctx - Telegram context
  * @param {Array} terminals - List of terminals to paginate
@@ -117,11 +128,14 @@ async function showTerminalsPagination(ctx, terminals, page = 0) {
     const end = start + TERMINALS_PER_PAGE;
     const pageTerminals = terminals.slice(start, end);
     
+    // Get user's language preference
+    const userLanguage = ctx.session?.languageCode || 'ru';
+    
     // Build message with terminals
     let message = `📋 *Активные терминалы* (${start + 1}-${Math.min(end, terminals.length)} из ${terminals.length})\n\n`;
     
     pageTerminals.forEach((terminal, idx) => {
-        message += `${start + idx + 1}. *${terminal.name || 'Без названия'}*\n`;
+        message += `${start + idx + 1}. *${getTerminalName(terminal, userLanguage)}*\n`;
         if (terminal.desc) message += `📍 Адрес: ${terminal.desc}\n`;
         message += `🌆 Город ID: ${terminal.city_id}\n`;
         message += `🚚 Доставка: ${terminal.delivery_type === 'all' ? 'Доступна' : terminal.delivery_type === 'pickup' ? 'Только самовывоз' : 'Нет информации'}\n\n`;
@@ -219,6 +233,9 @@ export async function handleShowTerminalsMap(ctx) {
             return;
         }
         
+        // Get user's language preference
+        const userLanguage = ctx.session?.languageCode || 'ru';
+        
         const message = `🗺 *Терминалы с координатами*\n\nВсего терминалов с координатами: ${activeTerminals.length}\n\nВыберите терминал для просмотра на карте:`;
         
         // Create keyboard with terminals (paginated if needed)
@@ -230,7 +247,7 @@ export async function handleShowTerminalsMap(ctx) {
         terminalsToShow.forEach(terminal => {
             keyboard.push([
                 Markup.button.callback(
-                    `📍 ${terminal.name || 'Терминал ' + terminal.id}`, 
+                    `📍 ${getTerminalName(terminal, userLanguage)}`, 
                     `show_map_${terminal.id}`
                 )
             ]);
@@ -277,11 +294,14 @@ export async function handleShowMapTerminal(ctx) {
             return;
         }
         
+        // Get user's language preference
+        const userLanguage = ctx.session?.languageCode || 'ru';
+        
         // Send location directly
         await ctx.deleteMessage();
         await ctx.sendLocation(terminal.latitude, terminal.longitude);
         
-        const infoMessage = `📍 *${terminal.name || 'Терминал ' + terminal.id}*\n\n` +
+        const infoMessage = `📍 *${getTerminalName(terminal, userLanguage)}*\n\n` +
             (terminal.desc ? `Адрес: ${terminal.desc}\n` : '') +
             `Город ID: ${terminal.city_id}\n` +
             `Тип доставки: ${terminal.delivery_type === 'all' ? 'Доступна' : terminal.delivery_type === 'pickup' ? 'Только самовывоз' : 'Нет информации'}`;

@@ -120,10 +120,6 @@ const cityHandlers = (bot) => {
 // Функция обработки выбора города
 async function handleCitySelection(ctx, city) {
   try {
-    if (!ctx.updateSession) {
-      throw new Error('Session middleware not properly initialized');
-    }
-
     // Определяем ID города
     let cityId;
     switch(city) {
@@ -161,12 +157,13 @@ async function handleCitySelection(ctx, city) {
         cityId = null;
     }
 
-    ctx.updateSession({
+    ctx.session = {
+      ...ctx.session,
       selectedCity: city,
-      selectedCityId: cityId,
+      currentCity: cityId,
       lastAction: 'city_selection',
       lastActionTime: new Date().toISOString()
-    });
+    };
     
     // Обновляем меню команд
     await setCommandsMenu(ctx);
@@ -189,11 +186,12 @@ async function showMainMenu(ctx) {
     }
     
     // Сохраняем состояние в истории навигации
-    ctx.updateSession({
+    ctx.session = {
+      ...ctx.session,
       lastAction: 'main_menu',
       lastActionTime: new Date().toISOString(),
       previousAction: ctx.session.lastAction // Сохраняем предыдущее действие
-    });
+    };
     
     await ctx.reply(`<b>${ctx.i18n.t('main_menu.title')}</b>`, {
       parse_mode: 'HTML',
@@ -202,7 +200,7 @@ async function showMainMenu(ctx) {
           [{ text: ctx.i18n.t('main_menu.order') }],
           [{ text: ctx.i18n.t('main_menu.order_history') }],
           [{ text: ctx.i18n.t('settings.settings') }, { text: ctx.i18n.t('main_menu.aksiya') }],
-          [{ text: ctx.i18n.t('main_menu.join_team') },{ text: ctx.i18n.t('main_menu.contact') }],
+          [{ text: ctx.i18n.t('main_menu.join_team') }, { text: ctx.i18n.t('main_menu.contact') }],
         
           // [{ text: ctx.i18n.t('menu.back') }]
         ],

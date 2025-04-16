@@ -142,13 +142,13 @@ const settingsHandler = (bot) => {
       }
       
       const settings = {
-        language: ctx.i18n.t(`language.current`),
+        languageCode: ctx.i18n.t(`language.current`),
         city: ctx.session.selectedCity ? ctx.i18n.t(`city.${ctx.session.selectedCity}`) : ctx.i18n.t('settings.not_selected'),
         branch: ctx.session.selectedBranch || ctx.i18n.t('settings.not_selected')
       };
       
       await ctx.reply(ctx.i18n.t('settings.current', { 
-        language: settings.language,
+        languageCode: settings.languageCode,
         city: settings.city,
         branch: settings.branch
       }), {
@@ -170,10 +170,9 @@ async function handleSettings(ctx) {
   try {
     logger.info(`Пользователь ${ctx.from.id} открыл настройки`);
     
-    ctx.updateSession({
-      lastAction: 'open_settings',
-      lastActionTime: new Date().toISOString()
-    });
+    // Обновляем сессию
+    ctx.session.lastAction = 'open_settings';
+    ctx.session.lastActionTime = new Date().toISOString();
     
     // Обновляем меню команд
     await setCommandsMenu(ctx);

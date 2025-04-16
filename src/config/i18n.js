@@ -8,10 +8,12 @@ const __dirname = dirname(__filename);
 
 // Настройка i18n
 const i18n = new TelegrafI18n({
-  defaultLanguage: 'ru',
+  defaultLanguage: 'en',
   directory: path.resolve(__dirname, '../locales'),
   useSession: true,
-  sessionName: 'session'
+  sessionName: 'session',
+  allowMissing: true,
+  fallbackToDefaultLanguage: true
 });
 
 export default i18n; 

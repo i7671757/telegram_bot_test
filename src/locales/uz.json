@@ -143,30 +143,7 @@
     "back": "◀️ Ortga",
     "basket": "🛒 Savat"
   },
-  "branches": {
-    "tashkent": {
-      "title": "Toshkentdagi filiallar:",
-      "list": {
-        "chilanzar": "🏪 Chilanzar",
-        "center": "🏪 Markaz 1",
-        "sergeli": "🏪 Sergeli",
-        "yunusabad": "🏪 Yunusobod"
-      }
-    },
-    "samarkand": {
-      "title": "Samarqanddagi filiallar:",
-      "list": {
-        "center": "🏪 Markaz",
-        "university": "🏪 Universitet"
-      }
-    },
-    "bukhara": {
-      "title": "Buxorodagi filiallar:",
-      "list": {
-        "center": "🏪 Markaz"
-      }
-    }
-  },
+
   "branch_info": {
     "address": "📍 Manzil",
     "phone": "📞 Telefon",

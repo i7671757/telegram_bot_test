@@ -143,30 +143,7 @@
     "back": "◀️ Back",
     "basket": "🛒 Basket"
   },
-  "branches": {
-    "tashkent": {
-      "title": "Branches in Tashkent:",
-      "list": {
-        "chilanzar": "🏪 Chilanzar",
-        "center": "🏪 Center 1",
-        "sergeli": "🏪 Sergeli",
-        "yunusabad": "🏪 Yunusabad"
-      }
-    },
-    "samarkand": {
-      "title": "Branches in Samarkand:",
-      "list": {
-        "center": "🏪 Center",
-        "university": "🏪 University"
-      }
-    },
-    "bukhara": {
-      "title": "Branches in Bukhara:",
-      "list": {
-        "center": "🏪 Center"
-      }
-    }
-  },
+
   "branch_info": {
     "address": "📍 Address",
     "phone": "📞 Phone",

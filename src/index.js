@@ -19,6 +19,8 @@ import settingsHandler from './handlers/settingsHandler.js';
 import mainMenuHandlers from './handlers/mainMenuHandlers.js';
 import { locationHandlers } from './handlers/locationHandlers.js';
 
+const LocalSession = require('telegraf-session-local');
+
 // Проверка наличия токена
 if (!process.env.TELEGRAM_TOKEN) {
   logger.error('TELEGRAM_TOKEN не найден в переменных окружения. Убедитесь, что файл .env существует и содержит правильный токен.');
@@ -38,6 +40,7 @@ const bot = new Telegraf(process.env.TELEGRAM_TOKEN);
 
 // Подключаем middleware
 bot.use(i18n.middleware());
+bot.use(new LocalSession({ database: 'session.json' }).middleware());
 bot.use(sessionMiddleware);
 bot.use(errorHandler);
 
@@ -114,4 +117,4 @@ process.once('SIGINT', () => {
 process.once('SIGTERM', () => {
   logger.info('Получен сигнал SIGTERM, закрытие бота...');
   bot.stop('SIGTERM');
-}); 
+});
