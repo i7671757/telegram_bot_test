@@ -6,9 +6,9 @@ import { dirname } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Настройка i18n
+// I18n konfiguratsiyasi
 const i18n = new TelegrafI18n({
-  defaultLanguage: 'en',
+  defaultLanguage: 'uz',
   directory: path.resolve(__dirname, '../locales'),
   useSession: true,
   sessionName: 'session',

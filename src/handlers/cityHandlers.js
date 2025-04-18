@@ -113,9 +113,7 @@ const cityHandlers = (bot) => {
       // Let the error handler middleware handle the error
     }
   });
-  
-  
-};
+    };
 
 // Функция обработки выбора города
 async function handleCitySelection(ctx, city) {

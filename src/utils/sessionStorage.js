@@ -26,10 +26,10 @@ async function loadSessions() {
     } catch (error) {
         if (error.code === 'ENOENT') {
             // Если файл не существует, создаем пустой объект
-            return {};
+            return { sessions: [] };
         }
         logger.error('Error loading sessions:', error);
-        return {};
+        return { sessions: [] };
     }
 }
 
@@ -46,21 +46,34 @@ async function saveSessions(sessions) {
 // Обновление сессии
 async function updateSession(userId, updateData) {
     const sessions = await loadSessions();
-    const currentSession = sessions[userId] || { languageCode: 'en', navigationHistory: [] };
+    
+    // Преобразуем userId в строку и затем в формат telegraf-session-local
+    const userIdStr = String(userId);
+    const sessionId = userIdStr.includes(':') ? userIdStr : `${userIdStr}:${userIdStr}`;
+    
+    const currentSession = sessions.sessions.find(s => s.id === sessionId) || { 
+        id: sessionId, 
+        data: { 
+            languageCode: 'en', 
+            navigationHistory: [],
+            currentScene: null
+        } 
+    };
     
     // Если есть информация о последнем действии, добавляем его в историю навигации
     if (updateData.lastAction && !updateData.isGoingBack) {
-        const navigationHistory = [...(currentSession.navigationHistory || [])];
+        const navigationHistory = [...(currentSession.data.navigationHistory || [])];
         
         // Сохраняем текущее состояние перед переходом
         const currentState = {
-            action: currentSession.lastAction,
+            action: currentSession.data.lastAction,
+            scene: currentSession.data.currentScene,
             data: {
-                languageCode: currentSession.languageCode,
-                selectedCity: currentSession.selectedCity,
-                selectedBranch: currentSession.selectedBranch,
-                lastAction: currentSession.lastAction,
-                previousAction: currentSession.previousAction
+                languageCode: currentSession.data.languageCode,
+                selectedCity: currentSession.data.selectedCity,
+                selectedBranch: currentSession.data.selectedBranch,
+                lastAction: currentSession.data.lastAction,
+                previousAction: currentSession.data.previousAction
             }
         };
         
@@ -83,42 +96,63 @@ async function updateSession(userId, updateData) {
     // Если это возврат назад, не обновляем историю
     if (!updateData.isGoingBack) {
         const updatedSession = { 
-            ...currentSession, 
-            ...updateData,
-            previousAction: currentSession.lastAction 
+            ...currentSession,
+            data: {
+                ...currentSession.data,
+                ...updateData,
+                previousAction: currentSession.data.lastAction
+            }
         };
-        sessions[userId] = updatedSession;
+        
+        // Обновляем или добавляем сессию
+        const sessionIndex = sessions.sessions.findIndex(s => s.id === sessionId);
+        if (sessionIndex === -1) {
+            sessions.sessions.push(updatedSession);
+        } else {
+            sessions.sessions[sessionIndex] = updatedSession;
+        }
     } else {
         // При возврате назад обновляем только необходимые поля
-        sessions[userId] = {
-            ...currentSession,
-            lastAction: updateData.lastAction,
-            lastActionTime: updateData.lastActionTime
-        };
+        const sessionIndex = sessions.sessions.findIndex(s => s.id === sessionId);
+        if (sessionIndex !== -1) {
+            sessions.sessions[sessionIndex] = {
+                ...currentSession,
+                data: {
+                    ...currentSession.data,
+                    lastAction: updateData.lastAction,
+                    lastActionTime: updateData.lastActionTime
+                }
+            };
+        }
     }
     
     await saveSessions(sessions);
-    return sessions[userId];
+    return sessions.sessions.find(s => s.id === sessionId)?.data;
 }
 
 // Получение предыдущего состояния
 async function getPreviousState(userId) {
     try {
         const sessions = await loadSessions();
-        const session = sessions[userId];
+        
+        // Преобразуем userId в строку и затем в формат telegraf-session-local
+        const userIdStr = String(userId);
+        const sessionId = userIdStr.includes(':') ? userIdStr : `${userIdStr}:${userIdStr}`;
+        
+        const session = sessions.sessions.find(s => s.id === sessionId);
         
         if (!session) {
             logger.warn(`Сессия не найдена для пользователя ${userId}`);
             return null;
         }
         
-        if (!session.navigationHistory || session.navigationHistory.length === 0) {
+        if (!session.data.navigationHistory || session.data.navigationHistory.length === 0) {
             logger.debug(`История навигации пуста для пользователя ${userId}`);
             return null;
         }
         
         // Берем предыдущее состояние и удаляем его из истории
-        const navigationHistory = [...session.navigationHistory];
+        const navigationHistory = [...session.data.navigationHistory];
         const previousState = navigationHistory.pop();
         
         // Проверяем валидность предыдущего состояния
@@ -128,11 +162,17 @@ async function getPreviousState(userId) {
         }
         
         // Обновляем историю в сессии
-        sessions[userId] = { 
-            ...session, 
-            navigationHistory,
-            isGoingBack: true
-        };
+        const sessionIndex = sessions.sessions.findIndex(s => s.id === sessionId);
+        if (sessionIndex !== -1) {
+            sessions.sessions[sessionIndex] = { 
+                ...session,
+                data: {
+                    ...session.data,
+                    navigationHistory,
+                    isGoingBack: true
+                }
+            };
+        }
         
         await saveSessions(sessions);
         return previousState;
@@ -142,4 +182,73 @@ async function getPreviousState(userId) {
     }
 }
 
-export { updateSession, getPreviousState }; 
+// Обновление информации о текущей сцене (работает с telegraf-session-local)
+async function updateSceneInfo(userId, sceneName, sceneData = {}) {
+    try {
+        // Загружаем текущие данные сессии
+        const sessions = await loadSessions();
+        
+        // Преобразуем userId в строку и затем в формат telegraf-session-local (userId:userId)
+        const userIdStr = String(userId);
+        const sessionId = userIdStr.includes(':') ? userIdStr : `${userIdStr}:${userIdStr}`;
+        
+        // Ищем сессию пользователя
+        let currentSession = sessions.sessions.find(s => s.id === sessionId);
+        
+        // Если сессия не найдена, создаем новую
+        if (!currentSession) {
+            logger.info(`Sessiya topilmadi, ${userId} uchun yangi sessiya yaratilmoqda`);
+            currentSession = {
+                id: sessionId,
+                data: {
+                    languageCode: 'uz',
+                    navigationHistory: [],
+                    currentScene: null,
+                    sceneData: {}
+                }
+            };
+            sessions.sessions.push(currentSession);
+        }
+        
+        // Инициализируем объект sceneData если его нет
+        if (!currentSession.data.sceneData) {
+            currentSession.data.sceneData = {};
+        }
+        
+        // Обновляем информацию о текущей сцене
+        const updatedSession = {
+            ...currentSession,
+            data: {
+                ...currentSession.data,
+                currentScene: sceneName,
+                lastAction: sceneData.action || 'enter_scene',
+                lastActionTime: new Date().toISOString(),
+                sceneData: {
+                    ...currentSession.data.sceneData,
+                    [sceneName]: {
+                        ...((currentSession.data.sceneData && currentSession.data.sceneData[sceneName]) || {}),
+                        ...sceneData,
+                        lastAccessed: new Date().toISOString()
+                    }
+                }
+            }
+        };
+        
+        // Обновляем сессию
+        const sessionIndex = sessions.sessions.findIndex(s => s.id === sessionId);
+        if (sessionIndex !== -1) {
+            sessions.sessions[sessionIndex] = updatedSession;
+        } else {
+            sessions.sessions.push(updatedSession);
+        }
+        
+        await saveSessions(sessions);
+        logger.info(`Обновлена информация о сцене ${sceneName} для пользователя ${userId}`);
+        return updatedSession.data;
+    } catch (error) {
+        logger.error(`Ошибка при обновлении информации о сцене ${sceneName} для пользователя ${userId}`, error);
+        return null;
+    }
+}
+
+export { updateSession, getPreviousState, updateSceneInfo }; 

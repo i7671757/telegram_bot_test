@@ -38,10 +38,18 @@ if (process.env.TELEGRAM_TOKEN === 'your_telegram_token_here' ||
 // Инициализация бота
 const bot = new Telegraf(process.env.TELEGRAM_TOKEN);
 
-// Подключаем middleware
+// Подключаем middleware в правильном порядке
+// 1. i18n middleware
 bot.use(i18n.middleware());
-bot.use(new LocalSession({ database: 'session.json' }).middleware());
+
+// 2. Session middleware
+const localSession = new LocalSession({ database: 'session.json' });
+bot.use(localSession.middleware());
+
+// 3. Наш session middleware для отслеживания сцен
 bot.use(sessionMiddleware);
+
+// 4. Обработчик ошибок
 bot.use(errorHandler);
 
 // Добавляем обработчик для ошибок в запуске бота

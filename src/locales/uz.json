@@ -1,5 +1,5 @@
 {
-  "welcome": "Salom! Men sizning botingizman. Navigatsiya uchun menyudan foydalaning:",
+  "welcome": "Assalomu alaykum! Les Ailes yetkazib berish xizmatiga xush kelibsiz.",
   "menu": {
     "time": "🕒 Vaqt",
     "photo": "📸 Rasm",
@@ -72,11 +72,11 @@
   "greeting": "Salom, ${name}! Bugun sizga qanday yordam bera olaman?",
   "say_hello": "Tanishganimdan xursandman! Men sizning foydali botingizman.",
   "time_in": "${city} shahridagi joriy vaqt: ${time}",
-  "select_city": "Shaharni tanlang:",
+  "select_city": "Iltimos, shaharni tanlang:",
   "select_branch": "Fillialni tanlang:",
   "branch_selected": "Siz {city} shahridagi {branch} fillialni tanladingiz",
   "session": {
-    "reset": "Sessiya sozlamalari qayta tiklandi"
+    "reset": "Sessiya ma'lumotlari tiklandi."
   },
   "navigation": {
     "history_empty": "Ortga qaytib bo'lmaydi. Navigatsiya tarixi bo'sh.",
@@ -87,9 +87,14 @@
   "settings": {
     "settings": "⚙️Sozlash ℹ️ Ma'lumotlar",
     "title": "Foydalanuvchi sozlamalari",
+    "change_name": "👤 Ismni o'zgartirish",
+    "change_number": "📞 Raqamni o'zgartirish",
     "change_language": "🌐 Tilni o'zgartirish",
     "change_city": "🏙️ Shaharni o'zgartirish",
     "change_branch": "🏢 Fillialni o'zgartirish",
+    "branch_info": "ℹ️ Fillial ma'lumotlari",
+    "public_offer": "📄 Ommaviy taklif",
+    "back": "◀️ Ortga",
     "my_settings": "📋 Mening sozlamalarim",
     "not_selected": "Tanlanmagan",
     "need_city_first": "Fillial tanlashdan oldin shahar tanlashingiz kerak.",

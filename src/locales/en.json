@@ -1,5 +1,5 @@
 {
-  "welcome": "Hello! I am your bot. Use the menu for navigation:",
+  "welcome": "Hello! Welcome to Les Ailes delivery service.",
   "menu": {
     "time": "🕒 Time",
     "photo": "📸 Photo",
@@ -72,11 +72,11 @@
   "greeting": "Hello, ${name}! How can I help you today?",
   "say_hello": "Nice to meet you! I'm your helpful bot.",
   "time_in": "Current time in ${city}: ${time}",
-  "select_city": "Select city:",
+  "select_city": "Please select a city:",
   "select_branch": "Select branch:",
   "branch_selected": "You selected branch {branch} in {city}",
   "session": {
-    "reset": "Session settings reset"
+    "reset": "Session data has been reset."
   },
   "navigation": {
     "history_empty": "Cannot go back. Navigation history is empty.",
@@ -87,12 +87,17 @@
   "settings": {
     "settings": "⚙️Settings ℹ️ Information",
     "title": "User Settings",
+    "change_name": "👤 Change name",
+    "change_number": "📞 Change number",
     "change_language": "🌐 Change language",
     "change_city": "🏙️ Change city",
     "change_branch": "🏢 Change branch",
+    "branch_info": "ℹ️ Branch information",
+    "public_offer": "📄 Public offer",
+    "back": "◀️ Back",
     "my_settings": "📋 My settings",
     "not_selected": "Not selected",
-    "need_city_first": "You need to select a city before choosing a branch.",
+    "need_city_first": "You need to select a city before selecting a branch.",
     "current": "<b>Your current settings:</b>\n\n🌐 Language: <b>{language}</b>\n🏙️ City: <b>{city}</b>\n🏢 Branch: <b>{branch}</b>"
   },
   "main_menu": {
@@ -108,7 +113,8 @@
     "start_message": "Take away  🙋‍♂️ or <b>delivery</b> 🚙",
     "history_empty": "You don't have any orders yet. Make your first order!",
     "self_pickup": "🏃 Self-pickup",
-    "delivery": "🚗 Delivery"
+    "delivery": "🚗 Delivery",
+    "my_orders": "My orders"
   },
   "aksiya": {
     "no_active": "There are no active promotions at the moment. Stay tuned for updates!"
