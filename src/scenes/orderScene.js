@@ -1,6 +1,6 @@
 import { Scenes, Markup } from 'telegraf';
 import { updateSceneInfo } from '../utils/sessionStorage.js';
-
+import { match } from 'telegraf-i18n';
 const orderScene = new Scenes.BaseScene('orderScene');
 
 orderScene.enter(async (ctx) => {
@@ -29,7 +29,7 @@ orderScene.enter(async (ctx) => {
 });
 
 // Lokatsiya yuborish tugmasi uchun handler (barcha tillarda)
-orderScene.hears([/📍 Отправить локацию/, /📍 Lokatsiyani yuborish/, /📍 Send location/], async (ctx) => {
+orderScene.hears(match("order.location_button"), async (ctx) => {
     try {
         await ctx.reply(ctx.i18n.t('order.send_location'), {
             reply_markup: {
@@ -82,7 +82,7 @@ orderScene.on('location', async (ctx) => {
 });
 
 // Menyu seksiyasi uchun handler
-orderScene.action(/^menu_.*$/, async (ctx) => {
+orderScene.action(match("order.menu_category"), async (ctx) => {
     try {
         const category = ctx.match[0].split('_')[1];
         let products = [];
@@ -143,7 +143,7 @@ orderScene.action(/^menu_.*$/, async (ctx) => {
 });
 
 // Mahsulotlarni savatga qo'shish uchun handler
-orderScene.action(/^add_product_\d+$/, async (ctx) => {
+orderScene.action(match("order.add_product"), async (ctx) => {
     try {
         const productId = parseInt(ctx.match[0].split('_')[2]);
         
@@ -174,7 +174,7 @@ orderScene.action(/^add_product_\d+$/, async (ctx) => {
 });
 
 // Savatni ko'rish uchun handler
-orderScene.action('show_cart', async (ctx) => {
+orderScene.action(match("order.show_cart"), async (ctx) => {
     try {
         if (!ctx.session.cart || ctx.session.cart.length === 0) {
             await ctx.editMessageText(ctx.i18n.t('order.cart_empty'), 
@@ -232,7 +232,7 @@ orderScene.action('show_cart', async (ctx) => {
 });
 
 // Savatni tozalash uchun handler
-orderScene.action('clear_cart', async (ctx) => {
+orderScene.action(match("order.clear_cart"), async (ctx) => {
     try {
         ctx.session.cart = [];
         
@@ -253,7 +253,7 @@ orderScene.action('clear_cart', async (ctx) => {
 });
 
 // Buyurtmani tasdiqlash uchun handler
-orderScene.action('confirm_order', async (ctx) => {
+orderScene.action(match("order.confirm_order"), async (ctx) => {
     try {
         // Buyurtmani tasdiqlash
         const keyboard = Markup.inlineKeyboard([
@@ -274,7 +274,7 @@ orderScene.action('confirm_order', async (ctx) => {
 });
 
 // To'lov usulini tanlash uchun handler
-orderScene.action('select_payment', async (ctx) => {
+orderScene.action(match("order.select_payment"), async (ctx) => {
     try {
         const keyboard = Markup.inlineKeyboard([
             [Markup.button.callback(ctx.i18n.t('order.cash'), 'payment_cash')],
@@ -294,8 +294,11 @@ orderScene.action('select_payment', async (ctx) => {
     }
 });
 
+btoa.
+
+
 // To'lov turini tanlash uchun handler
-orderScene.action(/^payment_.*$/, async (ctx) => {
+orderScene.action(match("order.payment_type"), async (ctx) => {
     try {
         const paymentType = ctx.match[0].split('_')[1];
         ctx.session.paymentType = paymentType;
@@ -331,7 +334,7 @@ orderScene.action(/^payment_.*$/, async (ctx) => {
 });
 
 // Orqaga tugmasi uchun handler (barcha tillarda)
-orderScene.hears([/⬅️ Назад/, /⬅️ Orqaga/, /⬅️ Back/], async (ctx) => {
+orderScene.hears(match("order.back"), async (ctx) => {
     try {
         // Orqaga qaytishda buyurtma berish holatini o'chirish
         ctx.session.orderStarted = false;

@@ -1,6 +1,7 @@
 import { Scenes } from 'telegraf';
 import logger from '../utils/logger.js';
 import { updateSceneInfo } from '../utils/sessionStorage.js';
+import { match } from 'telegraf-i18n';
 
 const languageScene = new Scenes.BaseScene('languageScene');
 
@@ -28,7 +29,7 @@ languageScene.enter(async (ctx) => {
 });
 
 // Til tanlash
-languageScene.hears('🇺🇿 O\'zbekcha', async (ctx) => {
+languageScene.hears(match("menuLanguage.uz"), async (ctx) => {
     try {
         ctx.session.languageCode = 'uz';
         logger.info(`Foydalanuvchi ${ctx.from.id} o'zbek tilini tanladi`);
@@ -43,7 +44,7 @@ languageScene.hears('🇺🇿 O\'zbekcha', async (ctx) => {
     }
 });
 
-languageScene.hears('🇷🇺 Русский', async (ctx) => {
+languageScene.hears(match("menuLanguage.ru"), async (ctx) => {
     try {
         ctx.session.languageCode = 'ru';
         logger.info(`Foydalanuvchi ${ctx.from.id} rus tilini tanladi`);
@@ -58,7 +59,7 @@ languageScene.hears('🇷🇺 Русский', async (ctx) => {
     }
 });
 
-languageScene.hears('🇬🇧 English', async (ctx) => {
+languageScene.hears(match("menuLanguage.en"), async (ctx) => {
     try {
         ctx.session.languageCode = 'en';
         logger.info(`Foydalanuvchi ${ctx.from.id} ingliz tilini tanladi`);

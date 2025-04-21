@@ -1,6 +1,7 @@
 import { Scenes } from 'telegraf';
 import logger from '../utils/logger.js';
 import { updateSceneInfo } from '../utils/sessionStorage.js';
+import { match } from 'telegraf-i18n';
 
 const cityScene = new Scenes.BaseScene('cityScene');
 
@@ -8,6 +9,11 @@ const cityScene = new Scenes.BaseScene('cityScene');
 cityScene.enter(async (ctx) => {
     try {
         logger.info(`Foydalanuvchi ${ctx.from.id} shahar sahnasiga kirdi`);
+        
+        // Remember the source scene if it exists in the state
+        if (ctx.scene.state && ctx.scene.state.source) {
+            ctx.session.sourceScene = ctx.scene.state.source;
+        }
         
         // Sahnaga kirganlik to'g'risida ma'lumot qoldirish
         await updateSceneInfo(ctx.from.id, 'cityScene');
@@ -48,65 +54,118 @@ cityScene.enter(async (ctx) => {
     }
 });
 
-// Shahar tanlash
+// Shahar tanlash - individual handlers using match
+cityScene.hears(match('city.tashkent'), async (ctx) => {
+    await handleCitySelection(ctx, 'tashkent');
+});
+
+cityScene.hears(match('city.samarkand'), async (ctx) => {
+    await handleCitySelection(ctx, 'samarkand');
+});
+
+cityScene.hears(match('city.bukhara'), async (ctx) => {
+    await handleCitySelection(ctx, 'bukhara');
+});
+
+cityScene.hears(match('city.fergana'), async (ctx) => {
+    await handleCitySelection(ctx, 'fergana');
+});
+
+cityScene.hears(match('city.andijan'), async (ctx) => {
+    await handleCitySelection(ctx, 'andijan');
+});
+
+cityScene.hears(match('city.margilan'), async (ctx) => {
+    await handleCitySelection(ctx, 'margilan');
+});
+
+cityScene.hears(match('city.chirchiq'), async (ctx) => {
+    await handleCitySelection(ctx, 'chirchiq');
+});
+
+cityScene.hears(match('city.qoqand'), async (ctx) => {
+    await handleCitySelection(ctx, 'qoqand');
+});
+
+cityScene.hears(match('city.urganch'), async (ctx) => {
+    await handleCitySelection(ctx, 'urganch');
+});
+
+cityScene.hears(match('city.nukus'), async (ctx) => {
+    await handleCitySelection(ctx, 'nukus');
+});
+
+// Orqaga qaytish tugmasi uchun handler
+cityScene.hears(match('menu.back'), async (ctx) => {
+    try {
+        // Orqaga qaytish ma'lumotini saqlash
+        await updateSceneInfo(ctx.from.id, 'cityScene', { action: 'back' });
+        
+        // Determine where to go back to based on the source scene
+        const sourceScene = ctx.session.sourceScene || 'languageScene';
+        
+        if (sourceScene === 'settingsScene') {
+            await ctx.scene.enter('settingsScene');
+        } else {
+            // Default is going back to language scene
+            await ctx.scene.enter('languageScene');
+        }
+    } catch (error) {
+        logger.error(`Orqaga qaytishda xatolik: ${error.message}`);
+        await ctx.reply(ctx.i18n.t('error.unknown'));
+    }
+});
+
+// Fallback handler for unrecognized messages
 cityScene.hears(/.*/, async (ctx) => {
     try {
-        const cityName = ctx.message.text;
+        await ctx.reply(ctx.i18n.t('city.unknown'));
+    } catch (error) {
+        logger.error(`Noto'g'ri shahar tanlashda xatolik: ${error.message}`);
+        await ctx.reply(ctx.i18n.t('error.city_selection'));
+    }
+});
+
+// City selection handler function
+async function handleCitySelection(ctx, selectedCityKey) {
+    try {
+        // Shaharni ID'sini aniqlash
+        const cityId = getCityId(selectedCityKey);
+        const cityName = ctx.i18n.t(`city.${selectedCityKey}`);
         
-        // Ensure we use the language that was selected
-        const userLanguage = ctx.session.languageCode || 'uz';
-        ctx.i18n.locale(userLanguage);
+        // Sessiyaga shahar ma'lumotlarini saqlash
+        ctx.session.selectedCity = selectedCityKey;
+        ctx.session.currentCity = cityId;
+        ctx.session.city = cityName;
+        ctx.session.lastAction = 'city_selection';
+        ctx.session.lastActionTime = new Date().toISOString();
         
-        // Har bir shahar uchun
-        const cityKeys = ['tashkent', 'samarkand', 'bukhara', 'fergana', 'andijan', 
-                       'margilan', 'chirchiq', 'qoqand', 'urganch', 'nukus'];
+        logger.info(`Foydalanuvchi ${ctx.from.id} ${cityName} shahrini tanladi`);
         
-        // Find which city was selected
-        let selectedCityKey = null;
-        for (const cityKey of cityKeys) {
-            if (ctx.i18n.t(`city.${cityKey}`) === cityName) {
-                selectedCityKey = cityKey;
-                break;
-            }
-        }
+        // Shaharni tanlash ma'lumotini saqlash
+        await updateSceneInfo(ctx.from.id, 'cityScene', { 
+            selectedCity: selectedCityKey,
+            currentCity: cityId,
+            displayName: cityName 
+        });
         
-        if (selectedCityKey) {
-            // Shaharni ID'sini aniqlash
-            const cityId = getCityId(selectedCityKey);
-            
-            // Sessiyaga shahar ma'lumotlarini saqlash
-            ctx.session.selectedCity = selectedCityKey;
-            ctx.session.currentCity = cityId;
-            ctx.session.lastAction = 'city_selection';
-            ctx.session.lastActionTime = new Date().toISOString();
-            
-            logger.info(`Foydalanuvchi ${ctx.from.id} ${cityName} shahrini tanladi`);
-            
-            // Shaharni tanlash ma'lumotini saqlash
-            await updateSceneInfo(ctx.from.id, 'cityScene', { 
-                selectedCity: selectedCityKey,
-                currentCity: cityId,
-                displayName: cityName 
-            });
-            
-            // Asosiy menyuga o'tish
+        // Determine where to go next based on source scene
+        const sourceScene = ctx.session.sourceScene || 'main';
+        
+        if (sourceScene === 'settingsScene') {
+            // Return to settings scene if that's where we came from
+            await ctx.reply(ctx.i18n.t('city.selected') || `${cityName} shahri tanlandi.`);
+            await ctx.scene.enter('settingsScene');
+        } else {
+            // Otherwise proceed to main menu
             await ctx.scene.leave();
             await showMainMenu(ctx);
-        } else if (cityName === ctx.i18n.t('menu.back')) {
-            // Orqaga qaytish ma'lumotini saqlash
-            await updateSceneInfo(ctx.from.id, 'cityScene', { action: 'back_to_language' });
-            
-            // Til tanlash sahnasiga qaytish
-            await ctx.scene.enter('languageScene');
-        } else {
-            // Noto'g'ri shahar nomi
-            await ctx.reply(ctx.i18n.t('city.unknown'));
         }
     } catch (error) {
         logger.error(`Shahar tanlashda xatolik: ${error.message}`);
         await ctx.reply(ctx.i18n.t('error.city_selection'));
     }
-});
+}
 
 // Shahar ID'sini olish funksiyasi
 function getCityId(city) {
@@ -136,12 +195,16 @@ function getCityId(city) {
     }
 }
 
+
+
 // Asosiy menyuni ko'rsatish funksiyasi
 async function showMainMenu(ctx) {
     try {
         // Ensure the selected language is used
         const userLanguage = ctx.session.languageCode || 'uz';
         ctx.i18n.locale(userLanguage);
+        
+
         
         // Asosiy menyuni ko'rsatganlik haqida ma'lumot saqlash
         await updateSceneInfo(ctx.from.id, 'mainMenu', { 
@@ -159,7 +222,10 @@ async function showMainMenu(ctx) {
             lastActionTime: new Date().toISOString(),
             previousAction: ctx.session.lastAction
         };
-        
+
+       
+
+                
         await ctx.reply(ctx.i18n.t('main_menu.title'), {
             parse_mode: 'HTML',
             reply_markup: {
@@ -172,10 +238,15 @@ async function showMainMenu(ctx) {
                 resize_keyboard: true
             }
         });
+
+        
+
     } catch (error) {
         logger.error(`Asosiy menyuni ko'rsatishda xatolik: ${error.message}`);
         throw error;
     }
 }
+
+
 
 export default cityScene; 

@@ -22,6 +22,7 @@
     "uz": "🇺🇿 O'zbekcha",
     "en": "🇬🇧 English"
   },
+  "language.selected": "Til o'zbekchaga o'zgartirildi",
   "city": {
     "tashkent": "Toshkent",
     "samarkand": "Samarqand",
@@ -33,7 +34,8 @@
     "urganch": "Urganch",
     "nukus": "Nukus",
     "chirchiq": "Chirchiq",
-    "unknown": "Kechirasiz, men bu shaharni bilmayman. Iltimos, ro'yxatdan shahar tanlang."
+    "unknown": "Kechirasiz, men bu shaharni bilmayman. Iltimos, ro'yxatdan shahar tanlang.",
+    "selected": "Siz {city} shahridan tanladingiz."
   },
   "commands": {
     "start": "🚀 Ishga tushirish",
@@ -67,7 +69,8 @@
   "language": {
     "select": "Tilni tanlang:",
     "changed": "Til o'zbekchaga o'zgartirildi",
-    "current": "Joriy til: o'zbekcha"
+    "current": "Joriy til: o'zbekcha",
+    "selected":"Siz O'zbek tilini tanladingiz."
   },
   "greeting": "Salom, ${name}! Bugun sizga qanday yordam bera olaman?",
   "say_hello": "Tanishganimdan xursandman! Men sizning foydali botingizman.",

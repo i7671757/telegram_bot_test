@@ -105,7 +105,7 @@ const mainMenuHandlers = (bot) => {
         parse_mode: 'HTML',
         reply_markup: {
           inline_keyboard: [
-            [{ text: 'Перейти', url: 'http://t.me/HavoqandJamoa_Bot' }]
+            [{ text: "O'tish", url: 'http://t.me/HavoqandJamoa_Bot' }]
           ]
         }
       });
